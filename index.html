@@ -49,9 +49,10 @@
           object.rotation.y = Math.random() * 2 * Math.PI;
           //object.rotation.z = Math.random() * 2 * Math.PI;
           scene.add( object );
-
+          var egh = new THREE.EdgesHelper( object, 0xffffff );
+          egh.material.linewidth = 2;
+          scene.add( egh );
         }
-
         //
 
         raycaster = new THREE.Raycaster();
@@ -64,7 +65,7 @@
         document.body.appendChild(renderer.domElement);
 
         //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-        document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+        //document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
         //
 
@@ -137,7 +138,7 @@
         render();
       }
 
-      var radius = 600;
+      var radius = 300;
       var theta = 0;
 
       function render() {
