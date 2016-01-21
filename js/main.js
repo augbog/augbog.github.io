@@ -6,6 +6,8 @@
   var mouse;
   var objects = [];
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
+  var radius = 300;
+  var theta = 0;
 
   init();
   animate();
@@ -21,23 +23,21 @@
 
     for ( var i = 0; i < 50; i ++ ) {
 
-      var object = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: Math.random() * 0.6 + 0.1 } ) );
-      object.position.x = Math.random() * 800 - 400;
-      object.position.y = Math.random() * 800 - 400;
-      object.position.z = Math.random() * 800 - 400;
+      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: Math.random() * 0.6 + 0.1 } ) );
+      objects[i].position.x = Math.random() * 800 - 400;
+      objects[i].position.y = Math.random() * 800 - 400;
+      objects[i].position.z = Math.random() * 800 - 400;
       // object.scale.x = Math.random() * 2 + 1;
       // object.scale.y = Math.random() * 2 + 1;
       // object.scale.z = Math.random() * 2 + 1;
-      object.rotation.x = Math.random() * 2 * Math.PI;
-      object.rotation.y = Math.random() * 2 * Math.PI;
+      objects[i].rotation.x = Math.random() * 2 * Math.PI;
+      objects[i].rotation.y = Math.random() * 2 * Math.PI;
       //object.rotation.z = Math.random() * 2 * Math.PI;
-      scene.add( object );
-      objects.push(object);
+      scene.add( objects[i] );
       var egh = new THREE.EdgesHelper( object, 0xffffff );
-      egh.material.linewidth = 2;
+      egh.material.linewidth = 1.5;
       scene.add( egh );
     }
-    //
 
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
@@ -122,34 +122,24 @@
     render();
   }
 
-  var radius = 300;
-  var theta = 0;
+  function render() {
+    // rotate camera
 
-function render() {
+    theta += 0.1;
 
-        // rotate camera
+    camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+    camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+    camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+    camera.lookAt( scene.position );
 
-        theta += 0.1;
+    // rotate every other cube a little
+    for (var i=0; i<objects.length; i+=2) {
+      objects[i].rotation.x += rotationSpeed[0];
+      objects[i].rotation.y += rotationSpeed[1];
+      objects[i].rotation.z += rotationSpeed[2];
+    }
+    raycaster.setFromCamera( mouse, camera );
+    renderer.render( scene, camera );
 
-        camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
-        camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
-        camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
-        camera.lookAt( scene.position );
-
-        camera.updateMatrixWorld();
-
-
-        // rotate every other cube a little
-        for (var i=0; i<objects.length; i+=2) {
-          objects[i].rotation.x += rotationSpeed[0];
-          objects[i].rotation.y += rotationSpeed[1];
-          objects[i].rotation.z += rotationSpeed[2];
-        }
-
-        // find intersections
-
-        raycaster.setFromCamera( mouse, camera );
-        renderer.render( scene, camera );
-
-      }
+  }
 })();
