@@ -10,8 +10,9 @@ var gulp        = require('gulp'),
   beep          = require('beepbeep'),
   colors        = require('colors'),
   plumber       = require('gulp-plumber'),
-  path          = require('path');
-  eslint        = require('gulp-eslint');
+  path          = require('path'),
+  eslint        = require('gulp-eslint'),
+  jsonlint      = require('gulp-jsonlint');
 
 // error handling convenience wrapper
 gulp.plumbedSrc = function(){
@@ -19,8 +20,8 @@ gulp.plumbedSrc = function(){
     .pipe(plumber({
       errorHandler: function(err) {
         beep();
-        console.log('[ERROR:]'.bold.red);
-        console.log(err.messageFormatted);
+        console.log('ERROR:'.bold.red);
+        console.log(JSON.stringify(err).bold.red);
         this.emit('end');
       }
     }));
@@ -56,6 +57,17 @@ gulp.task('scripts', function () {
     .pipe(replace('./build/js/*.min.js'))
     .pipe(gulp.dest('./build/js'))
     .pipe(notify({ message: 'JS files complete' }));
+
+  gulp.plumbedSrc('./js/quote.js')
+    .pipe(browserify())
+    .pipe(gulp.dest('./build/js/'))
+    .pipe(uglify())
+    .pipe(rename({
+       extname: '.min.js'
+     }))
+    .pipe(replace('./build/js/*.min.js'))
+    .pipe(gulp.dest('./build/js'))
+    .pipe(notify({ message: 'JS files complete' }));
 });
 
 gulp.task('eslint', function() {
@@ -64,6 +76,13 @@ gulp.task('eslint', function() {
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
     .pipe(notify({ message: 'ESLint complete' }));
+});
+
+gulp.task('jsonlint', function() {
+  return gulp.plumbedSrc('./json/**/*.json')
+    .pipe(jsonlint())
+    .pipe(jsonlint.failAfterError())
+    .pipe(notify({ message: 'JSONLint complete' }));
 });
 
 gulp.task('watch', ['browser-sync'], function() {

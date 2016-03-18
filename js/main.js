@@ -8,6 +8,7 @@
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
   var radius = 300;
   var theta = 0;
+  var size = 50;
 
   init();
   animate();
@@ -19,9 +20,9 @@
 
     scene = new THREE.Scene();
 
-    var geometry = new THREE.BoxGeometry( 25, 25, 25 );
+    var geometry = new THREE.BoxGeometry( size, size, size );
 
-    for ( var i = 0; i < 50; i ++ ) {
+    for ( var i = 0; i < 20; i ++ ) {
 
       objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: Math.random() * 0.6 + 0.1 } ) );
       objects[i].position.x = Math.random() * 800 - 400;
@@ -34,7 +35,7 @@
       objects[i].rotation.y = Math.random() * 2 * Math.PI;
       //object.rotation.z = Math.random() * 2 * Math.PI;
       scene.add( objects[i] );
-      var egh = new THREE.EdgesHelper( object, 0xffffff );
+      var egh = new THREE.EdgesHelper( objects[i], 0xffffff );
       egh.material.linewidth = 1.5;
       scene.add( egh );
     }
@@ -43,7 +44,7 @@
     mouse = new THREE.Vector2();
 
     renderer = new THREE.CanvasRenderer();
-    renderer.setClearColor( 0xf0f0f0 );
+    renderer.setClearColor("white");
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild(renderer.domElement);
@@ -125,7 +126,7 @@
   function render() {
     // rotate camera
 
-    theta += 0.1;
+    theta += 0.05;
 
     camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
     camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
