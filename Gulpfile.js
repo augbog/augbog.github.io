@@ -7,6 +7,9 @@ var gulp        = require('gulp'),
   rename        = require('gulp-rename'),
   notify        = require('gulp-notify'),
   replace       = require('gulp-replace'),
+  inject        = require('gulp-inject'),
+  svgstore      = require('gulp-svgstore'),
+  svgmin        = require('gulp-svgmin'),
   beep          = require('beepbeep'),
   colors        = require('colors'),
   plumber       = require('gulp-plumber'),
@@ -44,6 +47,33 @@ gulp.task('sass', function () {
     .pipe(minifyCSS())
     .pipe(gulp.dest('./build/css/'))
     .pipe(notify({ message: 'CSS complete' }));
+});
+
+gulp.task('svgstore', function () {
+  var svgSprite = gulp.plumbedSrc('./svg/*.svg')
+    .pipe(svgmin(function (file) {
+        var prefix = path.basename(file.relative, path.extname(file.relative));
+        return {
+            plugins: [{
+                cleanupIDs: {
+                    prefix: prefix + '-',
+                    minify: true
+                }
+            }]
+        }
+    }))
+    .pipe(rename({prefix: 'svg-'}))
+    .pipe(svgstore({inlineSvg: true}))
+    .pipe(rename("social-icons.svg"))
+    .pipe(gulp.dest('./build/img'));
+
+    return gulp.plumbedSrc('./index.html')
+      .pipe(inject(svgSprite, {
+        transform: function(filePath, file) {
+          return file.contents.toString();
+        }
+      }))
+      .pipe(gulp.dest('./'));
 });
 
 gulp.task('scripts', function () {
