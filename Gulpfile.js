@@ -116,8 +116,8 @@ gulp.task('jsonlint', function() {
 });
 
 gulp.task('watch', ['browser-sync'], function() {
-  gulp.watch('sass/**/*.scss', ['sass']);
-  gulp.watch('js/**/*.js', ['eslint', 'scripts']);
+  gulp.watch('./sass/**/*.scss', ['sass']);
+  gulp.watch('./js/**/*.js', ['eslint', 'scripts']);
 });
 
 gulp.task('default', ['watch']);

@@ -53,8 +53,9 @@
     //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
     //document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
-    //
-
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener( 'deviceorientation', onDeviceOrientation, false );
+    }
     window.addEventListener( 'resize', onWindowResize, false );
 
   }
@@ -78,62 +79,58 @@
 
   }
 
-  // function onDocumentMouseDown( event ) {
+  function onDocumentMouseDown( event ) {
 
-  //   event.preventDefault();
+    event.preventDefault();
+    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
 
-  //   mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-  //   mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+    raycaster.setFromCamera( mouse, camera );
 
-  //   raycaster.setFromCamera( mouse, camera );
+    var intersects = raycaster.intersectObjects( scene.children );
 
-  //   var intersects = raycaster.intersectObjects( scene.children );
+    if ( intersects.length > 0 ) {
 
-  //   if ( intersects.length > 0 ) {
+      new TWEEN.Tween( intersects[ 0 ].object.position ).to( {
+        x: Math.random() * 800 - 400,
+        y: Math.random() * 800 - 400,
+        z: Math.random() * 800 - 400 }, 2000 )
+      .easing( TWEEN.Easing.Elastic.Out).start();
 
-  //     new TWEEN.Tween( intersects[ 0 ].object.position ).to( {
-  //       x: Math.random() * 800 - 400,
-  //       y: Math.random() * 800 - 400,
-  //       z: Math.random() * 800 - 400 }, 2000 )
-  //     .easing( TWEEN.Easing.Elastic.Out).start();
+      new TWEEN.Tween( intersects[ 0 ].object.rotation ).to( {
+        x: Math.random() * 2 * Math.PI,
+        y: Math.random() * 2 * Math.PI,
+        z: Math.random() * 2 * Math.PI }, 2000 )
+      .easing( TWEEN.Easing.Elastic.Out).start();
 
-  //     new TWEEN.Tween( intersects[ 0 ].object.rotation ).to( {
-  //       x: Math.random() * 2 * Math.PI,
-  //       y: Math.random() * 2 * Math.PI,
-  //       z: Math.random() * 2 * Math.PI }, 2000 )
-  //     .easing( TWEEN.Easing.Elastic.Out).start();
+    }
+  }
 
-  //   }
+  function onDeviceOrientation( event ) {
+    // set camera to change its view based on accelerometer
+    camera.position.x = radius * Math.sin( THREE.Math.degToRad( event.gamma ) );
+    camera.position.y = radius * Math.sin( THREE.Math.degToRad( event.beta ) );
+    camera.lookAt( scene.position );
 
-  //   /*
-  //   // Parse all the faces
-  //   for ( var i in intersects ) {
-
-  //     intersects[ i ].face.material[ 0 ].color.setHex( Math.random() * 0xffffff | 0x80000000 );
-
-  //   }
-  //   */
-  // }
-
-  //
+    raycaster.setFromCamera( mouse, camera );
+    renderer.render( scene, camera );
+  }
 
   function animate() {
-
     requestAnimationFrame( animate );
-
     render();
   }
 
   function render() {
     // rotate camera
+    if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
+      theta += 0.05;
 
-    theta += 0.05;
-
-    camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
-    camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
-    camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
-    camera.lookAt( scene.position );
-
+      camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+      camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+      camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+      camera.lookAt( scene.position );
+    }
     // rotate every other cube a little
     for (var i=0; i<objects.length; i+=2) {
       objects[i].rotation.x += rotationSpeed[0];
@@ -142,7 +139,6 @@
     }
     raycaster.setFromCamera( mouse, camera );
     renderer.render( scene, camera );
-
   }
 })();
 },{}]},{},[1])
