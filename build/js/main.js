@@ -10,6 +10,8 @@
   var radius = 300;
   var theta = 0;
   var size = 50;
+  var materials;
+  var mesh;
 
   init();
   animate();
@@ -21,37 +23,43 @@
 
     scene = new THREE.Scene();
 
-    var geometry = new THREE.BoxGeometry( size, size, size );
+    // var texture = new THREE.TextureLoader().load( 'svg/codepen.svg' );
+    // var geometry = new THREE.BoxGeometry( 16, 16, 16 );
+    var texture = new THREE.TextureLoader().load( 'svg/grunt.png' );
+    var geometry = new THREE.BoxGeometry( 100, 100, 100 );
 
-    for ( var i = 0; i < 20; i ++ ) {
+    var material = new THREE.MeshBasicMaterial( { map: texture, transparent: true, opacity: 0.5 } );
+    mesh = new THREE.Mesh( geometry, material );
+    scene.add( mesh );
+    // for ( var i = 0; i < 20; i ++ ) {
 
-      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: Math.random() * 0.6 + 0.1 } ) );
-      objects[i].position.x = Math.random() * 800 - 400;
-      objects[i].position.y = Math.random() * 800 - 400;
-      objects[i].position.z = Math.random() * 800 - 400;
-      // object.scale.x = Math.random() * 2 + 1;
-      // object.scale.y = Math.random() * 2 + 1;
-      // object.scale.z = Math.random() * 2 + 1;
-      objects[i].rotation.x = Math.random() * 2 * Math.PI;
-      objects[i].rotation.y = Math.random() * 2 * Math.PI;
-      //object.rotation.z = Math.random() * 2 * Math.PI;
-      scene.add( objects[i] );
-      var egh = new THREE.EdgesHelper( objects[i], 0xffffff );
-      egh.material.linewidth = 1.5;
-      scene.add( egh );
-    }
+    //   objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: Math.random() * 0.6 + 0.1 } ) );
+    //   objects[i].position.x = Math.random() * 800 - 400;
+    //   objects[i].position.y = Math.random() * 800 - 400;
+    //   objects[i].position.z = Math.random() * 800 - 400;
+    //   // object.scale.x = Math.random() * 2 + 1;
+    //   // object.scale.y = Math.random() * 2 + 1;
+    //   // object.scale.z = Math.random() * 2 + 1;
+    //   objects[i].rotation.x = Math.random() * 2 * Math.PI;
+    //   objects[i].rotation.y = Math.random() * 2 * Math.PI;
+    //   //object.rotation.z = Math.random() * 2 * Math.PI;
+    //   scene.add( objects[i] );
+    //   var egh = new THREE.EdgesHelper( objects[i], 0xffffff );
+    //   egh.material.linewidth = 1.5;
+    //   scene.add( egh );
+    // }
 
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
 
-    renderer = new THREE.CanvasRenderer();
+    renderer = new THREE.WebGLRenderer();
     renderer.setClearColor("white");
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild(renderer.domElement);
 
-    //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-    //document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+    document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
     if (window.DeviceOrientationEvent) {
       window.addEventListener( 'deviceorientation', onDeviceOrientation, false );
@@ -131,12 +139,16 @@
       camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
       camera.lookAt( scene.position );
     }
+
+    mesh.rotation.x += rotationSpeed[0];
+    mesh.rotation.y += rotationSpeed[1];
+    mesh.rotation.z += rotationSpeed[2];
     // rotate every other cube a little
-    for (var i=0; i<objects.length; i+=2) {
-      objects[i].rotation.x += rotationSpeed[0];
-      objects[i].rotation.y += rotationSpeed[1];
-      objects[i].rotation.z += rotationSpeed[2];
-    }
+    // for (var i=0; i<objects.length; i+=2) {
+    //   objects[i].rotation.x += rotationSpeed[0];
+    //   objects[i].rotation.y += rotationSpeed[1];
+    //   objects[i].rotation.z += rotationSpeed[2];
+    // }
     raycaster.setFromCamera( mouse, camera );
     renderer.render( scene, camera );
   }
