@@ -27,7 +27,21 @@
     var texture = new THREE.TextureLoader().load( 'svg/grunt.png' );
     var geometry = new THREE.BoxGeometry( 100, 100, 100 );
 
-    var material = new THREE.MeshBasicMaterial( { map: texture, transparent: true, opacity: 0.5 } );
+        // uniforms
+    var uniforms = {
+        color: { type: "c", value: new THREE.Color( 0xFBA919 ) }, // material is "orange"
+        texture: { type: "t", value: texture },
+    };
+
+    // material
+    var material = new THREE.ShaderMaterial({
+        uniforms        : uniforms,
+        vertexShader    : document.getElementById( 'vertex_shader' ).textContent,
+        fragmentShader  : document.getElementById( 'fragment_shader' ).textContent
+    });
+
+    //var material = new THREE.MeshBasicMaterial( { map: texture, transparent: true, opacity: 0.5 } );
+    
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
     // for ( var i = 0; i < 20; i ++ ) {
@@ -47,6 +61,10 @@
     //   egh.material.linewidth = 1.5;
     //   scene.add( egh );
     // }
+
+    var egh = new THREE.EdgesHelper( mesh, 0xffffff );
+    egh.material.linewidth = 1.5;
+    scene.add( egh );
 
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
