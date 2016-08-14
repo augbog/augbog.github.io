@@ -1,0 +1,65 @@
+/**
+ * Header styles
+ **/
+
+ header {
+  font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: auto;
+  //background: rgba(0, 0, 0, 0.2);
+  z-index: 3;
+
+  @include breakpoint(600) {
+    text-align: center;
+  }
+
+  .header-container {
+    display: flex;
+
+    margin: 0px 20px;
+  }
+
+  .left-align {
+    align-self: flex-start;
+  }
+
+  .right-align {
+    margin-left: auto;
+  }
+
+  .secondary-nav {
+    line-height: 22px;
+  }
+
+  .mail-icon {
+    width: 15px;
+    height: 22px; // set the height so it vertically aligns
+    vertical-align: bottom;
+    margin-right: 5px;
+  }
+
+  li {
+    text-transform: uppercase;
+    display: inline-block;
+    height: auto;
+
+    margin: 0px 20px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  a {
+    &:hover {
+      transition: border-color 0.5s ease-in 0s;
+      border-color: black;
+    }
+  }
+ }
