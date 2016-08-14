@@ -24,7 +24,7 @@ gulp.plumbedSrc = function(){
       errorHandler: function(err) {
         beep();
         console.log('ERROR:'.bold.red);
-        console.log(JSON.stringify(err).bold.red);
+        console.log(JSON.stringify(err, null, 2).bold.red);
         this.emit('end');
       }
     }));
