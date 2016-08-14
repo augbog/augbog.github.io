@@ -12,13 +12,22 @@ body {
   width: 100%;
   top: 50%;
   transform: translateY(-50%);
+  font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
+
+  @include breakpoint(600) {
+    margin: 10px 0px 10px 0px;
+  }
 
   h1 {
-    font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
     text-transform: uppercase;
     letter-spacing: 2px;
     font-size: 36px;
-    margin: 10px 0px 10px 0px;
+  }
+
+  h2 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 20px;
   }
 
   .social-icons {
