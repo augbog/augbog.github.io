@@ -8,8 +8,8 @@
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
   var radius = 300;
   var theta = 0;
-  var size = 50;
-  var numOfCubes = window.innerWidth >= 600 ? 20 : 10;
+  var size = window.innerWidth >= 600 ? 10 : 15;
+  var numOfCubes = window.innerWidth >= 600 ? 100 : 50;
   var filterCoordinates = [];
 
   init();
