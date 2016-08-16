@@ -1,6 +1,7 @@
 var gulp        = require('gulp'),
   minifyCSS     = require('gulp-minify-css'),
   sass          = require('gulp-sass'),
+  postcss       = require('gulp-postcss'),
   browserify    = require('gulp-browserify'),
   browserSync   = require('browser-sync'),
   uglify        = require('gulp-uglify'),
@@ -10,12 +11,14 @@ var gulp        = require('gulp'),
   inject        = require('gulp-inject'),
   svgstore      = require('gulp-svgstore'),
   svgmin        = require('gulp-svgmin'),
+  plumber       = require('gulp-plumber'),
+  eslint        = require('gulp-eslint'),
+  jsonlint      = require('gulp-jsonlint'),
   beep          = require('beepbeep'),
   colors        = require('colors'),
-  plumber       = require('gulp-plumber'),
   path          = require('path'),
-  eslint        = require('gulp-eslint'),
-  jsonlint      = require('gulp-jsonlint');
+  sourcemaps    = require('gulp-sourcemaps'),
+  autoprefixer  = require('autoprefixer');
 
 // error handling convenience wrapper
 gulp.plumbedSrc = function(){
@@ -45,6 +48,12 @@ gulp.task('sass', function () {
   return gulp.plumbedSrc('./sass/**/*.scss')
     .pipe(sass())
     .pipe(minifyCSS())
+    .pipe(sourcemaps.init())
+    .pipe(postcss([autoprefixer({
+        browsers: ['last 2 versions']
+      }
+    )]))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./build/css/'))
     .pipe(notify({ message: 'CSS complete' }));
 });

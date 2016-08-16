@@ -1,59 +1,13 @@
-@mixin breakpoint($size) {
-  @media only screen and (max-width: $size + px) { @content; }
-}
+/**
+ * Main Stylesheet file for augbog.github.io
+ */
 
-body {
-  margin: 0;
-}
+// Mixins
+@import "mixins/breakpoint";
 
-.main-wrapper {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
+// Modular styles
+@import "modules/header";
+@import "modules/hero";
 
-  @include breakpoint(600) {
-    margin: 10px 0px 10px 0px;
-  }
-
-  h1 {
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 36px;
-  }
-
-  h2 {
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-size: 20px;
-  }
-
-  .social-icons {
-    .icon {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      margin: 0px 10px 0px 10px;
-
-      @include breakpoint(600) {
-        width: 30px;
-        height: 30px;
-      }
-    }
-
-    svg {
-      width: inherit;
-      height: inherit;
-    }
-
-    .twitter {
-      fill: #5EA9DD;
-    }
-
-    .linkedin {
-      fill: #0077B5;
-    }
-  }
-}
+// Other styles
+@import "modules/reset";
