@@ -8,7 +8,7 @@
   var radius = 300;
   var theta = 0;
   var size = window.innerWidth >= 600 ? 10 : 15;
-  var numOfCubes = window.innerWidth >= 600 ? 100 : 50;
+  var numOfCubes = window.innerWidth >= 600 ? 100 : 20;
   var filterCoordinates = [];
 
   init();
@@ -23,11 +23,11 @@
 
     var geometry = new THREE.BoxGeometry( size, size, size );
 
-    for ( var i = 0; i < numOfCubes; i ++ ) {
+    for (var i = 0; i < numOfCubes; i++) {
 
       // generate random coordinates that are not already occupied yet
       var coordinates = generateRandomCoords(filterCoordinates);
-      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: Math.random() * 0.6 + 0.1 } ) );
+      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: 0.4, transparent: true, depthWrite: false } ) );
       objects[i].position = Object.assign(objects[i].position, coordinates);
 
       // add to filter so we do not generate conflicting coordinates again
@@ -48,7 +48,7 @@
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
 
-    renderer = new THREE.CanvasRenderer();
+    renderer = new THREE.WebGLRenderer();
     renderer.setClearColor("white");
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -128,7 +128,7 @@
   function render() {
     // rotate camera
     if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
-      theta += 0.05;
+      theta += 0.02;
 
       camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
       camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
@@ -148,9 +148,9 @@
   // generate random coordinates based on page and size of cubes
   function generateRandomCoords() {
     var coords = {
-      x: (Math.random() * 800 - 400) + size,
-      y: (Math.random() * 800 - 400) + size,
-      z: (Math.random() * 800 - 400) + size
+      x: (Math.random() * 800 - 400),
+      y: (Math.random() * 800 - 400),
+      z: (Math.random() * 800 - 400)
     };
 
     return coords;

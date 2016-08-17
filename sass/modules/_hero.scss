@@ -9,10 +9,8 @@
   top: 50%;
   transform: translateY(-50%);
   font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
-
-  @include breakpoint(600) {
-    margin: 10px 0px;
-  }
+  background: rgba(255,255,255,0.7);
+  padding: 20px 0px;
 
   h1 {
     text-transform: uppercase;
