@@ -6,10 +6,11 @@
   var mouse;
   var objects = [];
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
-  var radius = 300;
+  var CAMERA_SPEED = 0.02;
+  var RADIUS = 300;
   var theta = 0;
-  var size = window.innerWidth >= 600 ? 10 : 15;
-  var numOfCubes = window.innerWidth >= 600 ? 100 : 20;
+  var CUBE_SIZE = window.innerWidth >= 600 ? 10 : 15;
+  var NUM_OF_CUBES = window.innerWidth >= 600 ? 100 : 20;
   var filterCoordinates = [];
 
   init();
@@ -22,9 +23,9 @@
 
     scene = new THREE.Scene();
 
-    var geometry = new THREE.BoxGeometry( size, size, size );
+    var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
 
-    for (var i = 0; i < numOfCubes; i++) {
+    for (var i = 0; i < NUM_OF_CUBES; i++) {
 
       // generate random coordinates that are not already occupied yet
       var coordinates = generateRandomCoords(filterCoordinates);
@@ -63,6 +64,16 @@
     }
     window.addEventListener( 'resize', onWindowResize, false );
 
+
+    if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
+      // set time shift
+      setInterval(function() {
+        CAMERA_SPEED = 0.2;
+        setTimeout(function() {
+          CAMERA_SPEED = 0.02;
+        }, 750)
+      }, 12000);
+    }
   }
 
   function onWindowResize() {
@@ -113,8 +124,8 @@
 
   function onDeviceOrientation( event ) {
     // set camera to change its view based on accelerometer
-    camera.position.x = radius * Math.sin( THREE.Math.degToRad( event.gamma ) );
-    camera.position.y = radius * Math.sin( THREE.Math.degToRad( event.beta ) );
+    camera.position.x = RADIUS * Math.sin( THREE.Math.degToRad( event.gamma ) );
+    camera.position.y = RADIUS * Math.sin( THREE.Math.degToRad( event.beta ) );
     camera.lookAt( scene.position );
 
     raycaster.setFromCamera( mouse, camera );
@@ -129,11 +140,12 @@
   function render() {
     // rotate camera
     if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
-      theta += 0.02;
 
-      camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
-      camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
-      camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+      theta += CAMERA_SPEED;
+
+      camera.position.x = RADIUS * Math.sin( THREE.Math.degToRad( theta ) );
+      camera.position.y = RADIUS * Math.sin( THREE.Math.degToRad( theta ) );
+      camera.position.z = RADIUS * Math.cos( THREE.Math.degToRad( theta ) );
       camera.lookAt( scene.position );
     }
     // rotate every other cube a little
