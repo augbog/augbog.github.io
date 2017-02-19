@@ -3,14 +3,19 @@
  **/
 
 .hero {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
-  background: rgba(255,255,255,0.7);
-  padding: 20px 0px;
+  position: relative;
+  overflow: hidden;
+
+  .content {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
+    background: rgba(255,255,255,0.7);
+    padding: 20px 0px;
+  }
 
   h1 {
     text-transform: uppercase;

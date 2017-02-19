@@ -54,7 +54,7 @@
     renderer.setClearColor("white");
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild(renderer.domElement);
+    document.getElementById('hero').appendChild(renderer.domElement);
 
     //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
     //document.addEventListener( 'touchstart', onDocumentTouchStart, false );
