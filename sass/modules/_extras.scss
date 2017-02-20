@@ -1,0 +1,8 @@
+.animate-link {
+  border-bottom: 1px solid transparent;
+  &:hover {
+    cursor: default;
+    transition: border-color 0.5s ease-in 0s;
+    border-color: rgba(0,0,0,0.2);
+  }
+}

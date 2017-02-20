@@ -1,4 +1,5 @@
 (function() {
+  require('./quote.js');
   var camera, scene, renderer;
 
   var raycaster;
