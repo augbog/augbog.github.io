@@ -252,6 +252,12 @@ module.exports=[
   {
     "quote": "Never doubt that a small group of thoughtful, committed, citizens can change the world. Indeed, it is the only thing that ever has.",
     "author": "Margaret Mead"
+  },
+  {
+    "quote": "When we speak we are afraid our words will not be heard or welcomed. But when we are silent, we are still afraid. So it is better to speak.",
+    "author": "Audre Lorde"
   }
 ]
+
+
 },{}]},{},[1])
