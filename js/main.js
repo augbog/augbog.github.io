@@ -6,12 +6,13 @@
   var mouse;
   var objects = [];
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
-  var CAMERA_SPEED = 0.02;
+  var PIVOT_SPEED = 0.02;
   var RADIUS = 300;
   var theta = 0;
   var CUBE_SIZE = window.innerWidth >= 600 ? 10 : 15;
-  var NUM_OF_CUBES = window.innerWidth >= 600 ? 100 : 20;
+  var NUM_OF_CUBES = window.innerWidth >= 600 ? 100 : 35;
   var filterCoordinates = [];
+  var pivot = new THREE.Group();
 
   init();
   animate();
@@ -19,9 +20,10 @@
   function init() {
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.y = 300;
-    camera.position.z = 500;
+    camera.position.z = window.innerWidth >= 600 ? 500 : 200;
 
     scene = new THREE.Scene();
+    scene.add(pivot);
 
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
 
@@ -38,8 +40,7 @@
       // modify rotation
       objects[i].rotation.x = Math.random() * 2 * Math.PI;
       objects[i].rotation.y = Math.random() * 2 * Math.PI;
-
-      scene.add( objects[i] );
+      pivot.add( objects[i] );
 
       // add edges to cubes
       var egh = new THREE.EdgesHelper( objects[i], 0xffffff );
@@ -68,9 +69,9 @@
     if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
       // set time shift
       setInterval(function() {
-        CAMERA_SPEED = 0.2;
+        PIVOT_SPEED = 0.2;
         setTimeout(function() {
-          CAMERA_SPEED = 0.02;
+          PIVOT_SPEED = 0.02;
         }, 750)
       }, 12000);
     }
@@ -123,10 +124,13 @@
   }
 
   function onDeviceOrientation( event ) {
-    // set camera to change its view based on accelerometer
-    camera.position.x = RADIUS * Math.sin( THREE.Math.degToRad( event.gamma ) );
-    camera.position.y = RADIUS * Math.sin( THREE.Math.degToRad( event.beta ) );
-    camera.lookAt( scene.position );
+    // set camera to change its view based on gyroscope
+    var vectorAngle = new THREE.Vector3(
+      RADIUS * Math.sin(THREE.Math.degToRad( event.alpha )),
+      RADIUS * Math.sin(THREE.Math.degToRad( event.beta )),
+      RADIUS * Math.sin(THREE.Math.degToRad( event.gamma ))
+    )
+    camera.lookAt(vectorAngle);
 
     raycaster.setFromCamera( mouse, camera );
     renderer.render( scene, camera );
@@ -138,28 +142,31 @@
   }
 
   function render() {
-    // rotate camera
+    // if we are not depending on device orientation, rotate camera constantly
     if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
-
-      theta += CAMERA_SPEED;
-
-      camera.position.x = RADIUS * Math.sin( THREE.Math.degToRad( theta ) );
-      camera.position.y = RADIUS * Math.sin( THREE.Math.degToRad( theta ) );
-      camera.position.z = RADIUS * Math.cos( THREE.Math.degToRad( theta ) );
       camera.lookAt( scene.position );
+    } else {
+      theta += PIVOT_SPEED;
+
+      pivot.rotation.x = Math.sin( THREE.Math.degToRad( theta ) );
+      pivot.rotation.y = Math.sin( THREE.Math.degToRad( theta ) );
+      pivot.rotation.z = Math.cos( THREE.Math.degToRad( theta ) );
     }
+
     // rotate every other cube a little
     for (var i=0; i<objects.length; i+=2) {
       objects[i].rotation.x += rotationSpeed[0];
       objects[i].rotation.y += rotationSpeed[1];
       objects[i].rotation.z += rotationSpeed[2];
     }
+
     raycaster.setFromCamera( mouse, camera );
     renderer.render( scene, camera );
   }
 
   // generate random coordinates based on page and size of cubes
-  function generateRandomCoords() {
+  // TODO: handle filtering of coordinates
+  function generateRandomCoords(filterCoordinates) {
     var coords = {
       x: (Math.random() * 800 - 400),
       y: (Math.random() * 800 - 400),
