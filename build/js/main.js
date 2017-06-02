@@ -126,10 +126,11 @@
 
   function onDeviceOrientation( event ) {
     // set camera to change its view based on gyroscope
+    // NOTE: adding 100 to beta starts the phone as if it were vertical
     var vectorAngle = new THREE.Vector3(
-      RADIUS * Math.sin(THREE.Math.degToRad( event.alpha )),
-      RADIUS * Math.sin(THREE.Math.degToRad( event.beta )),
-      RADIUS * Math.sin(THREE.Math.degToRad( event.gamma ))
+      RADIUS * Math.sin(THREE.Math.degToRad( event.alpha ))*-1,
+      RADIUS * Math.sin(THREE.Math.degToRad( event.beta + 100 ))*-1,
+      scene.position.z
     )
     camera.lookAt(vectorAngle);
 
@@ -145,12 +146,6 @@
   function render() {
     // if we are not depending on device orientation, rotate camera constantly
     if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
-
-      theta += PIVOT_SPEED;
-
-      pivot.rotation.x = Math.sin( THREE.Math.degToRad( theta ) );
-      pivot.rotation.y = Math.sin( THREE.Math.degToRad( theta ) );
-      pivot.rotation.z = Math.cos( THREE.Math.degToRad( theta ) );
       camera.lookAt( scene.position );
     } else {
       theta += PIVOT_SPEED;
