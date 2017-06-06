@@ -143,16 +143,11 @@
   }
 
   function render() {
-    // if we are not depending on device orientation, rotate camera constantly
-    if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
-      camera.lookAt( scene.position );
-    } else {
-      theta += PIVOT_SPEED;
+    theta += PIVOT_SPEED;
 
-      pivot.rotation.x = Math.sin( THREE.Math.degToRad( theta ) );
-      pivot.rotation.y = Math.sin( THREE.Math.degToRad( theta ) );
-      pivot.rotation.z = Math.cos( THREE.Math.degToRad( theta ) );
-    }
+    pivot.rotation.x = Math.sin( THREE.Math.degToRad( theta ) );
+    pivot.rotation.y = Math.sin( THREE.Math.degToRad( theta ) );
+    pivot.rotation.z = Math.cos( THREE.Math.degToRad( theta ) );
 
     // rotate every other cube a little
     for (var i=0; i<objects.length; i+=2) {
