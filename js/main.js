@@ -14,6 +14,17 @@
   var filterCoordinates = [];
   var pivot = new THREE.Group();
 
+  var pivotInterval;
+
+  // new THREE.Color(theme[i % theme.length])
+  var themes = [
+    ["#042A2B", "#5EB1BF", "#CDEDF6", "#EF7B45", "#D84727"],
+    ["#E3E7D3", "#BDC2BF", "#989C94", "#25291C", "#E6E49F"],
+    ["#EAF2E3", "#61E8E1", "#F25757", "F2E863", "F2CD60"],
+    ['#E28413', '#F56416', '#DD4B1A', '#EF271B', '#EA1744'],
+    ['#86583E', '#AF2A42', '#61643F', '#AFBE96', '#F0EEE1']
+  ];
+
   init();
   animate();
 
@@ -27,11 +38,13 @@
 
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
 
-    for (var i = 0; i < NUM_OF_CUBES; i++) {
+    var randomTheme = Math.floor(Math.random() * themes.length);
 
+    for (var i = 0; i < NUM_OF_CUBES; i++) {
+      var randomColor = Math.random() * 0xffffff;
       // generate random coordinates that are not already occupied yet
       var coordinates = generateRandomCoords(filterCoordinates);
-      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: 0.4, transparent: true, depthWrite: false } ) );
+      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: new THREE.Color(randomColor), opacity: 0.4, transparent: true, depthWrite: false } ) );
       objects[i].position = Object.assign(objects[i].position, coordinates);
 
       // add to filter so we do not generate conflicting coordinates again
@@ -57,8 +70,8 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.getElementById('hero').appendChild(renderer.domElement);
 
-    //document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-    //document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+    document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 
     if (window.DeviceOrientationEvent) {
       window.addEventListener( 'deviceorientation', onDeviceOrientation, false );
@@ -67,8 +80,11 @@
 
 
     if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
+      if (pivotInterval) {
+        clearInterval(pivotInterval);
+      }
       // set time shift
-      setInterval(function() {
+      pivotInterval = setInterval(function() {
         PIVOT_SPEED = 0.2;
         setTimeout(function() {
           PIVOT_SPEED = 0.02;
@@ -97,30 +113,7 @@
   }
 
   function onDocumentMouseDown( event ) {
-
-    event.preventDefault();
-    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
-
-    raycaster.setFromCamera( mouse, camera );
-
-    var intersects = raycaster.intersectObjects( scene.children );
-
-    if ( intersects.length > 0 ) {
-
-      new TWEEN.Tween( intersects[ 0 ].object.position ).to( {
-        x: Math.random() * 800 - 400,
-        y: Math.random() * 800 - 400,
-        z: Math.random() * 800 - 400 }, 2000 )
-      .easing( TWEEN.Easing.Elastic.Out).start();
-
-      new TWEEN.Tween( intersects[ 0 ].object.rotation ).to( {
-        x: Math.random() * 2 * Math.PI,
-        y: Math.random() * 2 * Math.PI,
-        z: Math.random() * 2 * Math.PI }, 2000 )
-      .easing( TWEEN.Easing.Elastic.Out).start();
-
-    }
+    themifyCubes();
   }
 
   function onDeviceOrientation( event ) {
@@ -170,5 +163,24 @@
     };
 
     return coords;
+  }
+
+  // makes the cubes change color
+  function themifyCubes() {
+    var randomTheme = Math.floor(Math.random() * themes.length + 1);
+    
+    if (randomTheme >= themes.length) {
+      for (var i = 0; i < objects.length; i++) {
+        var randomColor = Math.random() * 0xffffff;
+        objects[i].material.color.set(new THREE.Color(randomColor));
+      }
+    } else {
+      var theme = themes[randomTheme];
+
+      for (var i = 0; i < objects.length; i++) {
+        var hexColor = parseInt(theme[i % theme.length].replace("#", "0x"), 16);
+        objects[i].material.color.set(new THREE.Color(hexColor));
+      }
+    }
   }
 })();
