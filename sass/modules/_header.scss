@@ -3,12 +3,15 @@
  **/
 
  header {
-  font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
+  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-weight: 200;
+
   position: absolute;
   top: 0;
   width: 100%;
   height: auto;
-  //background: rgba(0, 0, 0, 0.2);
   z-index: 3;
 
   @include breakpoint(600) {
@@ -37,11 +40,9 @@
     width: 15px;
     height: 22px; // set the height so it vertically aligns
     vertical-align: bottom;
-    margin-right: 5px;
   }
 
   li {
-    text-transform: uppercase;
     display: inline-block;
     height: auto;
 
@@ -54,5 +55,9 @@
     &:last-child {
       margin-right: 0;
     }
+  }
+
+  .profile {
+    border-radius: 50%;
   }
 }

@@ -3,20 +3,19 @@
  **/
 
 .hero {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
   position: relative;
   overflow: hidden;
 
   .content {
     position: absolute;
-
-    text-transform: uppercase;
-    letter-spacing: 2px;
     text-align: center;
     width: 100%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'Open Sans Condensed', helvetica, arial, sans-serif;
     background: rgba(255,255,255,0.7);
     padding: 20px 0px;
   }
@@ -26,7 +25,9 @@
     margin-left: auto;
     margin-right: auto;
     font-size: 36px;
-    margin-bottom: 20px;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    margin-bottom: 5px;
 
     &.quote {
       font-size: 26px;
@@ -41,6 +42,7 @@
 
   h2 {
     font-size: 20px;
+    font-weight: 200;
     margin-bottom: 20px;
   }
 
@@ -50,6 +52,11 @@
       width: 20px;
       height: 20px;
       margin: 0px 10px;
+
+      &:hover, &:focus {
+        transition: transform 0.1s ease-out 0s;
+        transform: scale(1.2);
+      }
 
       @include breakpoint(600) {
         width: 30px;
@@ -70,4 +77,9 @@
       fill: #0077B5;
     }
   }
+}
+
+.profile {
+  width: 100px;
+  border-radius: 50%;
 }
