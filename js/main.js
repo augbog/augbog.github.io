@@ -27,6 +27,7 @@
 
   init();
   animate();
+  document.getElementById("hero").appendChild(renderer.domElement);
 
   function init() {
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -68,7 +69,6 @@
     renderer.setClearColor("white");
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    document.getElementById('hero').appendChild(renderer.domElement);
 
     document.addEventListener( 'mousedown', onDocumentMouseDown, false );
     document.addEventListener( 'touchstart', onDocumentTouchStart, false );
