@@ -1,5 +1,13 @@
 (function() {
   require('./quote.js');
+  require("konami-komando")({
+    once: true,
+    useCapture: true,
+    callback: function() {
+      console.log("Shh! Coming soon! Don't tell anyone 🤐");
+    }
+  });
+
   var camera, scene, renderer;
 
   var raycaster;
@@ -22,7 +30,9 @@
     ["#E3E7D3", "#BDC2BF", "#989C94", "#25291C", "#E6E49F"],
     ["#EAF2E3", "#61E8E1", "#F25757", "F2E863", "F2CD60"],
     ['#E28413', '#F56416', '#DD4B1A', '#EF271B', '#EA1744'],
-    ['#86583E', '#AF2A42', '#61643F', '#AFBE96', '#F0EEE1']
+    ['#86583E', '#AF2A42', '#61643F', '#AFBE96', '#F0EEE1'],
+    ['#D44A98', '#60B9CB', '#FFFB53'], //cmyk
+    ['#666', '#5EBB6A'] // evernote
   ];
 
   init();
@@ -38,6 +48,7 @@
     scene.add(pivot);
 
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
+    geometry.colorsNeedUpdate = true;
 
     var randomTheme = Math.floor(Math.random() * themes.length);
 
@@ -70,9 +81,8 @@
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
 
-    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-    document.addEventListener( 'touchstart', onDocumentTouchStart, false );
-
+    document.addEventListener( 'keyup', onKeyUp, false );
+    
     if (window.DeviceOrientationEvent) {
       window.addEventListener( 'deviceorientation', onDeviceOrientation, false );
     }
@@ -102,18 +112,10 @@
 
   }
 
-  function onDocumentTouchStart( event ) {
-
-    event.preventDefault();
-
-    event.clientX = event.touches[0].clientX;
-    event.clientY = event.touches[0].clientY;
-    onDocumentMouseDown( event );
-
-  }
-
-  function onDocumentMouseDown( event ) {
-    themifyCubes();
+  function onKeyUp(e) {
+    if (e.key.includes('Arrow')) {
+      themifyCubes();
+    }
   }
 
   function onDeviceOrientation( event ) {

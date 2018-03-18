@@ -1,9 +1,12 @@
 {
-  "name": "Dev-Envy",
+  "name": "augbog.github.io",
   "version": "1.0.0",
-  "description": "Base files for starting your own project.",
-  "repository": "dev-envy",
+  "description": "Augustus Yuan's personal website",
+  "repository": "augbog.github.io",
   "author": "Augustus Yuan",
+  "scripts": {
+    "build": "gulp svgstore sass scripts"
+  },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
     "babel-eslint": "^4.1.6",
@@ -28,6 +31,7 @@
     "gulp-svgmin": "^1.2.2",
     "gulp-svgstore": "^6.0.0",
     "gulp-uglify": "^1.2.0",
+    "konami-komando": "^1.0.1",
     "merge-stream": "^1.0.1",
     "path": "^0.11.14"
   }

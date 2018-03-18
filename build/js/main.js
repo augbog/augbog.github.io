@@ -1,6 +1,14 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function() {
   require('./quote.js');
+  require("konami-komando")({
+    once: true,
+    useCapture: true,
+    callback: function() {
+      console.log("Shh! Coming soon! Don't tell anyone 🤐");
+    }
+  });
+
   var camera, scene, renderer;
 
   var raycaster;
@@ -23,7 +31,9 @@
     ["#E3E7D3", "#BDC2BF", "#989C94", "#25291C", "#E6E49F"],
     ["#EAF2E3", "#61E8E1", "#F25757", "F2E863", "F2CD60"],
     ['#E28413', '#F56416', '#DD4B1A', '#EF271B', '#EA1744'],
-    ['#86583E', '#AF2A42', '#61643F', '#AFBE96', '#F0EEE1']
+    ['#86583E', '#AF2A42', '#61643F', '#AFBE96', '#F0EEE1'],
+    ['#D44A98', '#60B9CB', '#FFFB53'], //cmyk
+    ['#666', '#5EBB6A'] // evernote
   ];
 
   init();
@@ -39,6 +49,7 @@
     scene.add(pivot);
 
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
+    geometry.colorsNeedUpdate = true;
 
     var randomTheme = Math.floor(Math.random() * themes.length);
 
@@ -71,9 +82,8 @@
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
 
-    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-    document.addEventListener( 'touchstart', onDocumentTouchStart, false );
-
+    document.addEventListener( 'keyup', onKeyUp, false );
+    
     if (window.DeviceOrientationEvent) {
       window.addEventListener( 'deviceorientation', onDeviceOrientation, false );
     }
@@ -103,18 +113,10 @@
 
   }
 
-  function onDocumentTouchStart( event ) {
-
-    event.preventDefault();
-
-    event.clientX = event.touches[0].clientX;
-    event.clientY = event.touches[0].clientY;
-    onDocumentMouseDown( event );
-
-  }
-
-  function onDocumentMouseDown( event ) {
-    themifyCubes();
+  function onKeyUp(e) {
+    if (e.key.includes('Arrow')) {
+      themifyCubes();
+    }
   }
 
   function onDeviceOrientation( event ) {
@@ -185,7 +187,7 @@
     }
   }
 })();
-},{"./quote.js":2}],2:[function(require,module,exports){
+},{"./quote.js":2,"konami-komando":4}],2:[function(require,module,exports){
 (function() {
   var quotes = require('../json/quotes.json');
   var quoteTrigger = document.getElementById('quotes');
@@ -274,5 +276,55 @@ module.exports=[
   }
 ]
 
+
+},{}],4:[function(require,module,exports){
+var konami = function(opts) {
+  if (typeof opts.once === "undefined") {
+    opts.once = true;
+  }
+
+  if (typeof opts.useCapture === "undefined") {
+    opts.useCapture = true;
+  }
+
+  if (typeof opts.callback !== "function") {
+    throw new Error("Konami: callback is not a function.");
+    return;
+  }
+
+  var ran = false;
+  var keypresses = [];
+  var KONAMI_CODE = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+
+  document.addEventListener('keydown', function(e) {
+    if (opts.once && ran) {
+      return;
+    }
+
+    var key = (function(e) {
+      var event = e || window.event;
+      return (event.keyCode || event.which);
+    })(e);
+
+    // if first button isn't up, return
+    if (keypresses.length == 0 && key != 38) {
+      return;
+    // if valid konami code character and keypresses available
+    } else if (keypresses.length < 10 && /37|38|39|40|65|66/.test(key)) {
+      keypresses.push(key);
+      if (keypresses.length == 10
+          && JSON.stringify(keypresses) == JSON.stringify(KONAMI_CODE)) {
+        opts.callback();
+        if (opts.once) {
+          ran = true;
+        }
+      }
+    } else {
+      keypresses = [];
+    }
+  }, opts.useCapture);
+};
+
+module.exports = konami;
 
 },{}]},{},[1])
