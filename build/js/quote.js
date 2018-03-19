@@ -27,8 +27,10 @@
   function triggerQuoteAnimation() {
     var heading = document.getElementsByClassName('heading')[0];
     var description = document.getElementsByClassName('description')[0];
-    heading.className = 'quote';
-    description.className = 'author';
+    var jobTitle = document.getElementsByClassName("job-title")[0];
+    heading.className = 'heading quote';
+    description.className = 'description author';
+    jobTitle.style.display = 'none';
 
     var oHeading = heading.innerText;
     var oDescription = description.innerText;
@@ -36,13 +38,14 @@
       (function(i) {
         if (i == quotes.length) {
           setTimeout(function(e) {
-            heading.className = '';
-            description.className = '';
+            heading.className = 'heading';
+            description.className = 'description';
             description.innerHTML = '';
             oHeading.typeout(heading);
           }, 10000*i);
           setTimeout(function(e) {
             oDescription.typeout(description);
+            jobTitle.style = '';
           }, 10000*i+2000);
           quoteTrigger.removeEventListener('click', triggerQuoteAnimation);
         } else {

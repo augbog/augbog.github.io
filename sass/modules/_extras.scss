@@ -1,7 +1,7 @@
 .animate-link {
-  border-bottom: 1px solid transparent;
+  border-bottom: 0.5px solid transparent;
   &:hover {
-    cursor: default;
+    cursor: pointer;
     transition: border-color 0.5s ease-in 0s;
     border-color: rgba(0,0,0,0.2);
   }

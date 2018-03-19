@@ -26,6 +26,14 @@
   var pivotInterval;
 
   // new THREE.Color(theme[i % theme.length])
+  var socialThemes = {
+    "twitter": ["#1DA1F2", "#14171A", "#657786", "#AAB8C2"],
+    "github": ["#333", "#6e5494", "#c6e48b", "#7bc96f", "#239a3b", "#196127"],
+    "evernote": ['#dedede', '#5EBB6A', '#2DBD60'],
+    "stackoverflow": ["#f48024", "#222426", "#bcbbbb"],
+    "linkedin": ["#0077B5", "#00A0DC", "#313335", "#86888A"]
+  }
+
   var themes = [
     ["#042A2B", "#5EB1BF", "#CDEDF6", "#EF7B45", "#D84727"],
     ["#E3E7D3", "#BDC2BF", "#989C94", "#25291C", "#E6E49F"],
@@ -33,12 +41,17 @@
     ['#E28413', '#F56416', '#DD4B1A', '#EF271B', '#EA1744'],
     ['#86583E', '#AF2A42', '#61643F', '#AFBE96', '#F0EEE1'],
     ['#D44A98', '#60B9CB', '#FFFB53'], //cmyk
-    ['#666', '#5EBB6A'] // evernote
   ];
 
   init();
   animate();
   document.getElementById("hero").appendChild(renderer.domElement);
+  var icons = document.getElementsByClassName('js-theme-hover');
+  for (var i=0; i < icons.length; i++) {
+    icons[i].addEventListener("mouseenter", function(e) {
+      themifyCubes(socialThemes[e.target.getAttribute('data-brand')]);
+    });
+  }
 
   function init() {
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -115,7 +128,8 @@
 
   function onKeyUp(e) {
     if (e.key.includes('Arrow')) {
-      themifyCubes();
+      var randomTheme = themes[Math.floor(Math.random() * themes.length + 1)];
+      themifyCubes(randomTheme);
     }
   }
 
@@ -168,18 +182,14 @@
     return coords;
   }
 
-  // makes the cubes change color
-  function themifyCubes() {
-    var randomTheme = Math.floor(Math.random() * themes.length + 1);
-    
-    if (randomTheme >= themes.length) {
+  // takes in an array of hex colors and applies the theme equally to the cubes
+  function themifyCubes(theme) {
+    if (!theme) {
       for (var i = 0; i < objects.length; i++) {
         var randomColor = Math.random() * 0xffffff;
         objects[i].material.color.set(new THREE.Color(randomColor));
       }
     } else {
-      var theme = themes[randomTheme];
-
       for (var i = 0; i < objects.length; i++) {
         var hexColor = parseInt(theme[i % theme.length].replace("#", "0x"), 16);
         objects[i].material.color.set(new THREE.Color(hexColor));
@@ -216,8 +226,10 @@
   function triggerQuoteAnimation() {
     var heading = document.getElementsByClassName('heading')[0];
     var description = document.getElementsByClassName('description')[0];
-    heading.className = 'quote';
-    description.className = 'author';
+    var jobTitle = document.getElementsByClassName("job-title")[0];
+    heading.className = 'heading quote';
+    description.className = 'description author';
+    jobTitle.style.display = 'none';
 
     var oHeading = heading.innerText;
     var oDescription = description.innerText;
@@ -225,13 +237,14 @@
       (function(i) {
         if (i == quotes.length) {
           setTimeout(function(e) {
-            heading.className = '';
-            description.className = '';
+            heading.className = 'heading';
+            description.className = 'description';
             description.innerHTML = '';
             oHeading.typeout(heading);
           }, 10000*i);
           setTimeout(function(e) {
             oDescription.typeout(description);
+            jobTitle.style = '';
           }, 10000*i+2000);
           quoteTrigger.removeEventListener('click', triggerQuoteAnimation);
         } else {
