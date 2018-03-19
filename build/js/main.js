@@ -82,9 +82,11 @@
       pivot.add( objects[i] );
 
       // add edges to cubes
-      var egh = new THREE.EdgesHelper( objects[i], 0xffffff );
-      egh.material.linewidth = 1.5;
-      scene.add( egh );
+      var edges = new THREE.EdgesGeometry( geometry );
+      var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial(
+          { color: 0xffffff, linewidth: 2 }
+        ));
+      objects[i].add(line);
     }
 
     raycaster = new THREE.Raycaster();
