@@ -14,7 +14,7 @@
   var camera, scene, renderer;
 
   var raycaster;
-  var mouse = new THREE.Vector2(), INTERSECTED = [];
+  var mouse = new THREE.Vector2(), INTERSECTED = {};
   var objects = [];
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
   var PIVOT_SPEED = 0.02;
@@ -160,7 +160,10 @@
     // if user hovers over specific cube, TWEEN scale to make it pop
     raycaster.setFromCamera(mouse, camera);
     var intersects = raycaster.intersectObjects(objects);
-    if (intersects.length > 0) {
+
+    // check we have intersects and that the uuid of the object is not already tweening
+    if (intersects.length > 0 && !INTERSECTED[intersects[0].object.uuid]) {
+      INTERSECTED[intersects[0].object.uuid] = intersects[0].object;
       new TWEEN.Tween(intersects[0].object.scale)
         .to({ x: 3, y: 3, z: 3 }, 500)
         .easing(TWEEN.Easing.Elastic.Out)
@@ -169,18 +172,15 @@
         .to({ x: Math.random(), y: Math.random(), z: Math.random() }, 500)
         .easing(TWEEN.Easing.Elastic.Out)
         .start();
-      INTERSECTED.push(intersects[0].object);
     } else {
-      if (INTERSECTED.length > 0) {
-        var length = INTERSECTED.length;
-        for (var i=0; i < length; i++) {
-          new TWEEN.Tween(INTERSECTED[i].scale)
-            .to({ x: 1, y: 1, z: 1 }, 500)
-            .delay(500)
-            .easing(TWEEN.Easing.Elastic.Out)
-            .start();
-          INTERSECTED.splice(i, 1);
-        }
+      var length = Object.keys(INTERSECTED).length;
+      for (var uuid in INTERSECTED) {
+        new TWEEN.Tween(INTERSECTED[uuid].scale)
+          .to({ x: 1, y: 1, z: 1 }, 500)
+          .delay(500)
+          .easing(TWEEN.Easing.Elastic.Out)
+          .start();
+        delete INTERSECTED[uuid];
       }
     }
   }
