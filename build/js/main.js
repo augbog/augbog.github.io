@@ -14,7 +14,7 @@
   var camera, scene, renderer;
 
   var raycaster;
-  var mouse = new THREE.Vector2(), INTERSECTED;
+  var mouse = new THREE.Vector2(), INTERSECTED = [];
   var objects = [];
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
   var PIVOT_SPEED = 0.02;
@@ -166,17 +166,21 @@
         .easing(TWEEN.Easing.Elastic.Out)
         .start();
       new TWEEN.Tween(intersects[0].object.rotation)
-        .to({ x: Math.random() * 2 * Math.PI, y: Math.random() * 2 * Math.PI, z: Math.random() * 2 * Math.PI }, 500)
+        .to({ x: Math.random(), y: Math.random(), z: Math.random() }, 500)
         .easing(TWEEN.Easing.Elastic.Out)
         .start();
-      INTERSECTED = intersects[0].object;
+      INTERSECTED.push(intersects[0].object);
     } else {
-      if (INTERSECTED) {
-        new TWEEN.Tween(INTERSECTED.scale)
-          .to({ x: 1, y: 1, z: 1 }, 500)
-          .easing(TWEEN.Easing.Elastic.Out)
-          .start();
-        INTERSECTED = null;
+      if (INTERSECTED.length > 0) {
+        var length = INTERSECTED.length;
+        for (var i=0; i < length; i++) {
+          new TWEEN.Tween(INTERSECTED[i].scale)
+            .to({ x: 1, y: 1, z: 1 }, 500)
+            .delay(500)
+            .easing(TWEEN.Easing.Elastic.Out)
+            .start();
+          INTERSECTED.splice(i, 1);
+        }
       }
     }
   }
