@@ -7,11 +7,13 @@
       console.log("Shh! Coming soon! Don't tell anyone 🤐");
     }
   });
+  var TWEEN = require("@tweenjs/tween.js");
+  window.TWEEN = TWEEN;
 
   var camera, scene, renderer;
 
   var raycaster;
-  var mouse;
+  var mouse = new THREE.Vector2(), INTERSECTED;
   var objects = [];
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
   var PIVOT_SPEED = 0.02;
@@ -97,6 +99,7 @@
     renderer.setSize( window.innerWidth, window.innerHeight );
 
     document.addEventListener( 'keyup', onKeyUp, false );
+    document.addEventListener('mousemove', onDocumentMouseMove, false);
     
     if (window.DeviceOrientationEvent) {
       window.addEventListener( 'deviceorientation', onDeviceOrientation, false );
@@ -148,8 +151,38 @@
     renderer.render( scene, camera );
   }
 
+  function onDocumentMouseMove(event) {
+    event.preventDefault();
+    mouse.x = event.clientX / window.innerWidth * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // if user hovers over specific cube, TWEEN scale to make it pop
+    raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects(objects);
+    if (intersects.length > 0) {
+      new TWEEN.Tween(intersects[0].object.scale)
+        .to({ x: 3, y: 3, z: 3 }, 500)
+        .easing(TWEEN.Easing.Elastic.Out)
+        .start();
+      new TWEEN.Tween(intersects[0].object.rotation)
+        .to({ x: Math.random() * 2 * Math.PI, y: Math.random() * 2 * Math.PI, z: Math.random() * 2 * Math.PI }, 500)
+        .easing(TWEEN.Easing.Elastic.Out)
+        .start();
+      INTERSECTED = intersects[0].object;
+    } else {
+      if (INTERSECTED) {
+        new TWEEN.Tween(INTERSECTED.scale)
+          .to({ x: 1, y: 1, z: 1 }, 500)
+          .easing(TWEEN.Easing.Elastic.Out)
+          .start();
+        INTERSECTED = null;
+      }
+    }
+  }
+
   function animate() {
     requestAnimationFrame( animate );
+    TWEEN.update();
     render();
   }
 
@@ -175,9 +208,9 @@
   // TODO: handle filtering of coordinates
   function generateRandomCoords(filterCoordinates) {
     var coords = {
-      x: (Math.random() * 800 - 400),
-      y: (Math.random() * 800 - 400),
-      z: (Math.random() * 800 - 400)
+      x: (Math.random() * 800 - 200),
+      y: (Math.random() * 800 - 200),
+      z: (Math.random() * 800 - 200)
     };
 
     return coords;

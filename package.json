@@ -31,8 +31,11 @@
     "gulp-svgmin": "^1.2.2",
     "gulp-svgstore": "^6.0.0",
     "gulp-uglify": "^1.2.0",
-    "konami-komando": "^1.0.1",
     "merge-stream": "^1.0.1",
     "path": "^0.11.14"
+  },
+  "dependencies": {
+    "@tweenjs/tween.js": "^17.2.0",
+    "konami-komando": "^1.0.1"
   }
 }
