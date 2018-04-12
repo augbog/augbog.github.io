@@ -1,4 +1,5 @@
 (function() {
+  'use strict';
   require('./quote.js');
   require("konami-komando")({
     once: true,
@@ -14,6 +15,7 @@
 
   var raycaster;
   var mouse = new THREE.Vector2(), INTERSECTED = {};
+  var multiplier = 1;
   var objects = [];
   var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
   var PIVOT_SPEED = 0.02;
@@ -72,7 +74,7 @@
       // generate random coordinates that are not already occupied yet
       var coordinates = generateRandomCoords(filterCoordinates);
       objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: new THREE.Color(randomColor), opacity: 0.4, transparent: true, depthWrite: false } ) );
-      objects[i].position = Object.assign(objects[i].position, coordinates);
+      objects[i].position.set(coordinates.x, coordinates.y, coordinates.z);
 
       // add to filter so we do not generate conflicting coordinates again
       filterCoordinates.push(coordinates);
@@ -114,7 +116,7 @@
       // set time shift
       pivotInterval = setInterval(function() {
         PIVOT_SPEED = 0.2;
-        setTimeout(function() {
+        var pivotTimeout = setTimeout(function() {
           PIVOT_SPEED = 0.02;
         }, 750)
       }, 12000);
@@ -161,24 +163,25 @@
     var intersects = raycaster.intersectObjects(objects);
 
     // check we have intersects and that the uuid of the object is not already tweening
-    if (intersects.length > 0 && !INTERSECTED[intersects[0].object.uuid]) {
-      INTERSECTED[intersects[0].object.uuid] = intersects[0].object;
-      new TWEEN.Tween(intersects[0].object.scale)
-        .to({ x: 3, y: 3, z: 3 }, 500)
-        .easing(TWEEN.Easing.Elastic.Out)
-        .start();
-      new TWEEN.Tween(intersects[0].object.rotation)
-        .to({ x: Math.random(), y: Math.random(), z: Math.random() }, 500)
-        .easing(TWEEN.Easing.Elastic.Out)
-        .start();
-    } else {
-      var length = Object.keys(INTERSECTED).length;
-      for (var uuid in INTERSECTED) {
-        new TWEEN.Tween(INTERSECTED[uuid].scale)
-          .to({ x: 1, y: 1, z: 1 }, 500)
-          .delay(500)
+    if (intersects.length > 0) {
+      if (!INTERSECTED[intersects[0].object.uuid]) {
+        INTERSECTED[intersects[0].object.uuid] = intersects[0].object;
+        var scaleTween = new TWEEN.Tween(intersects[0].object.scale)
+          .to({ x: 3, y: 3, z: 3 }, 500)
+          .easing(TWEEN.Easing.Elastic.Out);
+        var rotationTween = new TWEEN.Tween(intersects[0].object.rotation)
+          .to({ x: Math.random(), y: Math.random(), z: Math.random() }, 500)
           .easing(TWEEN.Easing.Elastic.Out)
-          .start();
+        var shrinkTween = new TWEEN.Tween(intersects[0].object.scale)
+          .to({ x: 1, y: 1, z: 1 }, 500)
+          .delay(1000)
+          .easing(TWEEN.Easing.Elastic.Out);
+        
+        scaleTween.chain(shrinkTween).start();
+        rotationTween.start();
+      }
+    } else {
+      for (var uuid in INTERSECTED) {
         delete INTERSECTED[uuid];
       }
     }
@@ -191,17 +194,27 @@
   }
 
   function render() {
-    theta += PIVOT_SPEED;
-
-    pivot.rotation.x = Math.sin( THREE.Math.degToRad( theta ) );
-    pivot.rotation.y = Math.sin( THREE.Math.degToRad( theta ) );
-    pivot.rotation.z = Math.cos( THREE.Math.degToRad( theta ) );
+    // in order to prevent the theta from forever growing, go reverse and interchange
+    if (multiplier > 0 && theta >= 100) {
+      multiplier = -1;
+    } else if (multiplier < 0 && theta <= 0) {
+      multiplier = 1;
+    }
+    theta += PIVOT_SPEED * multiplier;
+    
+    pivot.rotation.set(
+      Math.sin( THREE.Math.degToRad( theta )),
+      Math.sin( THREE.Math.degToRad( theta )),
+      Math.sin( THREE.Math.degToRad( theta ))
+    );
 
     // rotate every other cube a little
     for (var i=0; i<objects.length; i+=2) {
-      objects[i].rotation.x += rotationSpeed[0];
-      objects[i].rotation.y += rotationSpeed[1];
-      objects[i].rotation.z += rotationSpeed[2];
+      objects[i].rotation.set(
+        objects[i].rotation.x + rotationSpeed[0],
+        objects[i].rotation.y += rotationSpeed[1],
+        objects[i].rotation.z += rotationSpeed[2]
+      )
     }
 
     raycaster.setFromCamera( mouse, camera );
