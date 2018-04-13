@@ -26,7 +26,7 @@
   var filterCoordinates = [];
   var pivot = new THREE.Group();
 
-  var pivotInterval;
+  var pivotInterval, pivotTimeout;
   
   var socialThemes = {
     "twitter": ["#1DA1F2", "#14171A", "#657786", "#AAB8C2"],
@@ -66,6 +66,12 @@
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
     geometry.colorsNeedUpdate = true;
 
+    // edge for cubes
+    var lineMaterial = new THREE.LineBasicMaterial({
+      color: 0xffffff,
+      linewidth: 2
+    });
+
     var randomTheme = Math.floor(Math.random() * themes.length);
 
     for (var i = 0; i < NUM_OF_CUBES; i++) {
@@ -83,11 +89,8 @@
       objects[i].rotation.y = Math.random() * 2 * Math.PI;
       pivot.add( objects[i] );
 
-      // add edges to cubes
       var edges = new THREE.EdgesGeometry( geometry );
-      var line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial(
-          { color: 0xffffff, linewidth: 2 }
-        ));
+      var line = new THREE.LineSegments(edges, lineMaterial);
       objects[i].add(line);
     }
 
@@ -112,6 +115,9 @@
       if (pivotInterval) {
         clearInterval(pivotInterval);
       }
+      if (pivotTimeout) {
+        clearTimeout(pivotTimeout);
+      }
       // set time shift
       pivotInterval = setInterval(function() {
         PIVOT_SPEED = 0.2;
@@ -123,6 +129,12 @@
   }
 
   function onWindowResize() {
+    if (pivotInterval) {
+      clearInterval(pivotInterval);
+    }
+    if (pivotTimeout) {
+      clearTimeout(pivotTimeout);
+    }
 
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
