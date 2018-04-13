@@ -4,8 +4,8 @@
   require("konami-komando")({
     once: true,
     useCapture: true,
-    callback: function() {
-      console.log("Shh! Coming soon! Don't tell anyone 🤐");
+    callback: function() {;
+      flickerCubes();
     }
   });
   var TWEEN = require("@tweenjs/tween.js");
@@ -27,8 +27,7 @@
   var pivot = new THREE.Group();
 
   var pivotInterval;
-
-  // new THREE.Color(theme[i % theme.length])
+  
   var socialThemes = {
     "twitter": ["#1DA1F2", "#14171A", "#657786", "#AAB8C2"],
     "github": ["#333", "#6e5494", "#c6e48b", "#7bc96f", "#239a3b", "#196127"],
@@ -245,6 +244,27 @@
         var hexColor = parseInt(theme[i % theme.length].replace("#", "0x"), 16);
         objects[i].material.color.set(new THREE.Color(hexColor));
       }
+    }
+  }
+
+  // flicker cubes through all the themes twice! :)
+  function flickerCubes() {
+    var ran = false;
+    var i = 0;
+    var index = 0;
+    while (i++ < themes.length) {
+      var theme = themes[i];
+      if (i === themes.length - 1 && !ran) {
+        ran = true;
+        i = 0;
+      } else if (i === themes.length - 1) {
+        theme = false;
+      }
+      (function(i) {
+        setTimeout(function() {
+          themifyCubes(theme);
+        }, index++ * 200);
+      })(i);
     }
   }
 })();
