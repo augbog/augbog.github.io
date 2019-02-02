@@ -48,12 +48,12 @@
   init();
   animate();
   document.getElementById("hero").appendChild(renderer.domElement);
-  var icons = document.getElementsByClassName('js-theme-hover');
-  for (var i=0; i < icons.length; i++) {
-    icons[i].addEventListener("mouseenter", function(e) {
+  var themeHoversItemContainer = document.getElementsByClassName('content')[0];
+  themeHoversItemContainer.addEventListener('mouseover', function(e) {
+    if (e.target && e.target.getAttribute('data-brand')) {
       themifyCubes(socialThemes[e.target.getAttribute('data-brand')]);
-    });
-  }
+    }
+  });
 
   function init() {
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
