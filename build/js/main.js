@@ -22,8 +22,8 @@
   var PIVOT_SPEED = 0.02;
   var RADIUS = 300;
   var theta = 0;
-  var CUBE_SIZE = window.innerWidth >= 600 ? 10 : 15;
-  var NUM_OF_CUBES = window.innerWidth >= 600 ? 100 : 35;
+  var CUBE_SIZE = window.innerWidth >= 600 ? 5 : 10;
+  var NUM_OF_CUBES = window.innerWidth >= 600 ? 1000 : 100;
   var filterCoordinates = [];
   var pivot = new THREE.Group();
 
@@ -49,12 +49,15 @@
   init();
   animate();
   document.getElementById("hero").appendChild(renderer.domElement);
-  var themeHoversItemContainer = document.getElementsByClassName('content')[0];
-  themeHoversItemContainer.addEventListener('mouseover', function(e) {
-    if (e.target && e.target.getAttribute('data-brand')) {
-      themifyCubes(socialThemes[e.target.getAttribute('data-brand')]);
-    }
-  });
+
+  if (window.innerWidth >= 600) {
+    var themeHoversItemContainer = document.getElementsByClassName('content')[0];
+    themeHoversItemContainer.addEventListener('mouseover', function(e) {
+      if (e.target && e.target.getAttribute('data-brand')) {
+        themifyCubes(socialThemes[e.target.getAttribute('data-brand')]);
+      }
+    });
+  }
 
   function init() {
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -206,7 +209,8 @@
   }
 
   function render() {
-    // in order to prevent the theta from forever growing, go reverse and interchange
+    // in order to prevent the theta from forever growing which could hit Number.MAX_SAFE_INTEGER,
+    // go reverse and interchange
     if (multiplier > 0 && theta >= 100) {
       multiplier = -1;
     } else if (multiplier < 0 && theta <= 0) {
