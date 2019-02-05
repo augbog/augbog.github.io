@@ -6,7 +6,8 @@
     once: true,
     useCapture: true,
     callback: function() {;
-      flickerCubes();
+      darkMode();
+      themifyCubes();
     }
   });
   var TWEEN = require("@tweenjs/tween.js");
@@ -18,21 +19,28 @@
   var mouse = new THREE.Vector2(), INTERSECTED = {};
   var multiplier = 1;
   var objects = [];
-  var rotationSpeed = [(Math.random() * 0.4)/100, (Math.random() * 0.4)/100, (Math.random() * 0.4)/100];
+  var rotationSpeed = [(Math.random() * 0.4) / 100, (Math.random() * 0.4) / 100, (Math.random() * 0.4) / 100];
   var PIVOT_SPEED = 0.02;
   var RADIUS = 300;
   var theta = 0;
   var CUBE_SIZE = window.innerWidth >= 600 ? 5 : 10;
-  var NUM_OF_CUBES = window.innerWidth >= 600 ? 1000 : 100;
+  var NUM_OF_CUBES = window.innerWidth >= 600 ? 1000 : 250;
+  var SATISFIABLE_CUBE_SCORE = 15;
   var filterCoordinates = [];
   var pivot = new THREE.Group();
+
+  var cubeScore = 0;
+  var lineMaterial = new THREE.LineBasicMaterial({
+    color: 0xffffff,
+    linewidth: 2
+  });
 
   var pivotInterval, pivotTimeout;
   
   var socialThemes = {
     "twitter": ["#1DA1F2", "#14171A", "#657786", "#AAB8C2"],
     "github": ["#333", "#6e5494", "#c6e48b", "#7bc96f", "#239a3b", "#196127"],
-    "evernote": ['#dedede', '#5EBB6A', '#2DBD60'],
+    "evernote": ['#00A82D'],
     "stackoverflow": ["#f48024", "#222426", "#bcbbbb"],
     "linkedin": ["#0077B5", "#00A0DC", "#313335", "#86888A"]
   }
@@ -49,6 +57,7 @@
   init();
   animate();
   document.getElementById("hero").appendChild(renderer.domElement);
+  var keepScoreElement = document.getElementsByClassName('js-increment')[0];
 
   if (window.innerWidth >= 600) {
     var themeHoversItemContainer = document.getElementsByClassName('content')[0];
@@ -69,12 +78,6 @@
 
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
     geometry.colorsNeedUpdate = true;
-
-    // edge for cubes
-    var lineMaterial = new THREE.LineBasicMaterial({
-      color: 0xffffff,
-      linewidth: 2
-    });
 
     var randomTheme = Math.floor(Math.random() * themes.length);
 
@@ -194,6 +197,7 @@
         
         scaleTween.chain(shrinkTween).start();
         rotationTween.start();
+        incrementScore();
       }
     } else {
       for (var uuid in INTERSECTED) {
@@ -264,6 +268,23 @@
     }
   }
 
+  function darkMode() {
+    renderer.setClearColor("black");
+    document.body.classList.add("dark-mode");
+    lineMaterial = new THREE.LineBasicMaterial({
+      color: 0x000000,
+      linewidth: 2
+    });
+    var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
+    geometry.colorsNeedUpdate = true;
+    var edges = new THREE.EdgesGeometry( geometry );
+    for (var i = 0; i < objects.length; i++) {
+      var line = new THREE.LineSegments(edges, lineMaterial);
+      objects[i].add(line);
+    }
+    render();
+  }
+
   // flicker cubes through all the themes twice! :)
   function flickerCubes() {
     var ran = false;
@@ -282,6 +303,16 @@
           themifyCubes(theme);
         }, index++ * 200);
       })(i);
+    }
+  }
+
+  function incrementScore() {
+    cubeScore++;
+    keepScoreElement.innerText = cubeScore;
+    if (cubeScore >= SATISFIABLE_CUBE_SCORE && document.getElementsByClassName('js-score-hidden').length > 0) {
+      document.getElementsByClassName('js-score-hidden')[0].classList.remove('js-score-hidden');
+    } else if (cubeScore % 100 === 0) {
+      flickerCubes();
     }
   }
 })();

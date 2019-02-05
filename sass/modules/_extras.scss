@@ -6,3 +6,16 @@
     border-color: rgba(0,0,0,0.2);
   }
 }
+
+.dark-mode {
+  color: white !important;
+  font-weight: 800 !important;
+
+  .github use {
+    fill: white !important;
+  }
+
+  .content {
+    background: transparent !important;
+  }
+}
