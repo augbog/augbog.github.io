@@ -268,7 +268,11 @@
   }
 
   function darkMode() {
-    renderer.setClearColor("black");
+    var whiteClearColor = new THREE.Color("white");
+    var darkClearColor = new THREE.Color("black");
+    var colorModeTween = new TWEEN.Tween(whiteClearColor).to(darkClearColor, 500).onUpdate(function() {
+      renderer.setClearColor(whiteClearColor);
+    }).start();
     document.body.classList.add("dark-mode");
     lineMaterial = new THREE.LineBasicMaterial({
       color: 0x000000,

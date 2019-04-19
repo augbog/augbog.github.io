@@ -8,14 +8,20 @@
 }
 
 .dark-mode {
+  transition: all 0.5s ease-in 0s;
   color: white !important;
   font-weight: 800 !important;
 
-  .github use {
+  .github use, .mail-icon use {
+    transition: fill 0.5s ease-in 0s;
     fill: white !important;
   }
 
   .content {
     background: transparent !important;
+  }
+
+  .job-title, .description, .email {
+    font-weight: 400 !important;
   }
 }
