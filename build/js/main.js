@@ -193,15 +193,14 @@
         var shrinkTween = new TWEEN.Tween(intersects[0].object.scale)
           .to({ x: 1, y: 1, z: 1 }, 500)
           .delay(1000)
-          .easing(TWEEN.Easing.Elastic.Out);
-        
+          .easing(TWEEN.Easing.Elastic.Out)
+          .onComplete(function(tween) {
+            var uuid = Object.keys(INTERSECTED).shift();
+            delete INTERSECTED[uuid];
+          });
         scaleTween.chain(shrinkTween).start();
         rotationTween.start();
         incrementScore();
-      }
-    } else {
-      for (var uuid in INTERSECTED) {
-        delete INTERSECTED[uuid];
       }
     }
   }
