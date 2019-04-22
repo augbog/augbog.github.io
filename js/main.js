@@ -27,6 +27,11 @@
   var SATISFIABLE_CUBE_SCORE = 15;
   var filterCoordinates = [];
   var pivot = new THREE.Group();
+  var themeIndex = 0;
+
+  var darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
+
+  console.log(darkModeMedia);
 
   var cubeScore = 0;
   var lineMaterial = new THREE.LineBasicMaterial({
@@ -116,6 +121,13 @@
     }
     window.addEventListener( 'resize', onWindowResize, false );
 
+    // Detect dark mode only supported in Safari 12.1
+    if (darkModeMedia.matches) {
+      darkMode();
+    }
+    darkModeMedia.addListener(function(e) {
+      darkModeMedia.matches ? darkMode() : lightMode();
+    });
 
     if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
       if (pivotInterval) {
@@ -150,9 +162,9 @@
   }
 
   function onKeyUp(e) {
+    themeIndex = (themeIndex + 1) % themes.length;
     if (e.key.includes('Arrow')) {
-      var randomTheme = themes[Math.floor(Math.random() * themes.length + 1)];
-      themifyCubes(randomTheme);
+      themifyCubes(themes[themeIndex]);
     }
   }
 
@@ -275,6 +287,27 @@
     document.body.classList.add("dark-mode");
     lineMaterial = new THREE.LineBasicMaterial({
       color: 0x000000,
+      linewidth: 2
+    });
+    var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
+    geometry.colorsNeedUpdate = true;
+    var edges = new THREE.EdgesGeometry( geometry );
+    for (var i = 0; i < objects.length; i++) {
+      var line = new THREE.LineSegments(edges, lineMaterial);
+      objects[i].add(line);
+    }
+    render();
+  }
+
+  function lightMode() {
+    var whiteClearColor = new THREE.Color("white");
+    var darkClearColor = new THREE.Color("black");
+    var colorModeTween = new TWEEN.Tween(darkClearColor).to(whiteClearColor, 500).onUpdate(function() {
+      renderer.setClearColor(darkClearColor);
+    }).start();
+    document.body.classList.remove("dark-mode");
+    lineMaterial = new THREE.LineBasicMaterial({
+      color: 0xffffff,
       linewidth: 2
     });
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );

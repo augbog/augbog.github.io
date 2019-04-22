@@ -7,14 +7,18 @@
   }
 }
 
-.dark-mode {
+body {
   transition: all 0.5s ease-in 0s;
+}
+
+@mixin darkMode {
   color: white !important;
   font-weight: 800 !important;
 
-  .github use, .mail-icon use {
-    transition: fill 0.5s ease-in 0s;
-    fill: white !important;
+  .github, .mail-icon {
+    use {
+      fill: white !important;
+    }
   }
 
   .content {
@@ -23,5 +27,11 @@
 
   .job-title, .description, .email {
     font-weight: 400 !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    @include darkMode();
   }
 }
