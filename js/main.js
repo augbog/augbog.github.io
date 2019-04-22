@@ -4,9 +4,8 @@
   require("konami-komando")({
     once: true,
     useCapture: true,
-    callback: function() {;
-      darkMode();
-      themifyCubes();
+    callback: function() {
+      blowUpCubes();
     }
   });
   var TWEEN = require("@tweenjs/tween.js");
@@ -30,7 +29,6 @@
   var themeIndex = 0;
 
   var darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
-  var isDarkMode = darkModeMedia.matches;
 
   var cubeScore = 0;
   var lineMaterial = new THREE.LineBasicMaterial({
@@ -108,7 +106,7 @@
     mouse = new THREE.Vector2();
 
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(isDarkMode ? "black" : "white");
+    renderer.setClearColor(darkModeMedia.matches ? "black" : "white");
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -122,10 +120,15 @@
 
     // Detect dark mode only supported in Safari 12.1
     if (darkModeMedia.matches) {
-      darkMode();
+      setColorScheme({ darkMode: true, shouldTransition: false });
     }
     darkModeMedia.addListener(function(e) {
-      darkModeMedia.matches ? darkMode() : lightMode();
+      var colorSchemeOptions = {
+        darkMode: darkModeMedia.matches,
+        shouldTransition: true,
+      }
+      setColorScheme(colorSchemeOptions);
+      //darkModeMedia.matches ? darkMode() : lightMode();
     });
 
     if (window.innerWidth > 600 || !window.DeviceOrientationEvent) {
@@ -277,36 +280,30 @@
     }
   }
 
-  function darkMode() {
+  /**
+   * Sets the color scheme 
+   * options: { darkMode: boolean, shouldTransition: boolean }
+   */
+  function setColorScheme(options) {
     var whiteClearColor = new THREE.Color("white");
     var darkClearColor = new THREE.Color("black");
-    var colorModeTween = new TWEEN.Tween(whiteClearColor).to(darkClearColor, 500).onUpdate(function() {
-      renderer.setClearColor(whiteClearColor);
-    }).start();
-    document.body.classList.add("dark-mode");
-    lineMaterial = new THREE.LineBasicMaterial({
-      color: 0x000000,
-      linewidth: 2
-    });
-    var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
-    geometry.colorsNeedUpdate = true;
-    var edges = new THREE.EdgesGeometry( geometry );
-    for (var i = 0; i < objects.length; i++) {
-      var line = new THREE.LineSegments(edges, lineMaterial);
-      objects[i].add(line);
+    var firstClearColor = options.darkMode ? whiteClearColor : darkClearColor;
+    var transitionedClearColor = options.darkMode ? darkClearColor : whiteClearColor;
+    if (options.shouldTransition) {
+      var colorModeTween = new TWEEN.Tween(firstClearColor)
+        .to(transitionedClearColor, 500).onUpdate(function() {
+        renderer.setClearColor(firstClearColor);
+      }).start();
+    } else {
+      renderer.setClearColor(transitionedClearColor);
     }
-    render();
-  }
-
-  function lightMode() {
-    var whiteClearColor = new THREE.Color("white");
-    var darkClearColor = new THREE.Color("black");
-    var colorModeTween = new TWEEN.Tween(darkClearColor).to(whiteClearColor, 500).onUpdate(function() {
-      renderer.setClearColor(darkClearColor);
-    }).start();
-    document.body.classList.remove("dark-mode");
+    if (options.darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
     lineMaterial = new THREE.LineBasicMaterial({
-      color: 0xffffff,
+      color: options.darkMode ? 0x000000 : 0xffffff,
       linewidth: 2
     });
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
@@ -337,6 +334,35 @@
           themifyCubes(theme);
         }, index++ * 200);
       })(i);
+    }
+  }
+
+  // Handy function to handle logarithmic function
+  function getBaseLog(x, y) {
+    return Math.log(y) / Math.log(x);
+  }
+  
+  // Blow up all the cubes in logarithmic fashion so as time goes on, we blow up more
+  function blowUpCubes() {
+    var shrinkTweens = [];
+    for (var i = 0; i < objects.length; i+=2) {
+      var delay = Math.floor(getBaseLog(2, i) * 200);
+      var scaleTween = new TWEEN.Tween(objects[i].scale)
+      .delay(delay)
+      .to({ x: 3, y: 3, z: 3 }, 500)
+      .easing(TWEEN.Easing.Elastic.Out).onComplete(function() {
+        shrinkTween.start();
+      });
+      var rotationTween = new TWEEN.Tween(objects[i].rotation)
+        .delay(delay)
+        .to({ x: Math.random(), y: Math.random(), z: Math.random() }, 500)
+        .easing(TWEEN.Easing.Elastic.Out)
+      var shrinkTween = new TWEEN.Tween(objects[i].scale)
+        .delay(Math.floor(getBaseLog(2, Math.floor(objects.length / 2)) * 200))
+        .to({ x: 1, y: 1, z: 1 }, 500)
+        .easing(TWEEN.Easing.Elastic.Out);
+      scaleTween.chain(shrinkTween).start();
+      rotationTween.start();
     }
   }
 
