@@ -30,9 +30,8 @@
   var pivot = new THREE.Group();
   var themeIndex = 0;
 
-  var darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)')
-
-  console.log(darkModeMedia);
+  var darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+  var isDarkMode = darkModeMedia.matches;
 
   var cubeScore = 0;
   var lineMaterial = new THREE.LineBasicMaterial({
@@ -110,7 +109,7 @@
     mouse = new THREE.Vector2();
 
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor("white");
+    renderer.setClearColor(isDarkMode ? "black" : "white");
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -121,13 +120,13 @@
       window.addEventListener( 'deviceorientation', onDeviceOrientation, false );
     }
     window.addEventListener( 'resize', onWindowResize, false );
-    console.log(darkModeMedia);
+
+    // Detect dark mode only supported in Safari 12.1
     if (darkModeMedia.matches) {
-      console.log('sup?');
       darkMode();
     }
-  
     darkModeMedia.addListener(function(e) {
+      console.log(darkModeMedia);
       darkModeMedia.matches ? darkMode() : lightMode();
     });
 
@@ -160,7 +159,7 @@
     camera.updateProjectionMatrix();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
-
+    renderer.render( scene, camera );
   }
 
   function onKeyUp(e) {
