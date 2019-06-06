@@ -18,7 +18,7 @@
   var mouse = new THREE.Vector2(), INTERSECTED = {};
   var multiplier = 1;
   var objects = [];
-  var rotationSpeed = [(Math.random() * 0.4) / 100, (Math.random() * 0.4) / 100, (Math.random() * 0.4) / 100];
+  var rotationSpeed = [(Math.random() * 0.4) / 20, (Math.random() * 0.4) / 20, (Math.random() * 0.4) / 20];
   var PIVOT_SPEED = 0.02;
   var RADIUS = 300;
   var theta = 0;
@@ -41,6 +41,7 @@
   
   var socialThemes = {
     "twitter": ["#1DA1F2", "#14171A", "#657786", "#AAB8C2"],
+    "twitch": ["#6441A4"],
     "github": ["#333", "#6e5494", "#c6e48b", "#7bc96f", "#239a3b", "#196127"],
     "evernote": ['#00A82D'],
     "stackoverflow": ["#f48024", "#222426", "#bcbbbb"],
@@ -78,16 +79,22 @@
     scene = new THREE.Scene();
     scene.add(pivot);
 
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(darkModeMedia.matches ? "black" : "white");
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
     geometry.colorsNeedUpdate = true;
-
-    var randomTheme = Math.floor(Math.random() * themes.length);
 
     for (var i = 0; i < NUM_OF_CUBES; i++) {
       var randomColor = Math.random() * 0xffffff;
       // generate random coordinates that are not already occupied yet
       var coordinates = generateRandomCoords(filterCoordinates);
-      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: new THREE.Color(randomColor), opacity: 0.4, transparent: true, depthWrite: false } ) );
+      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: new THREE.Color(randomColor), opacity: 0.6, transparent: true, depthWrite: false } ) );
       objects[i].position.set(coordinates.x, coordinates.y, coordinates.z);
 
       // add to filter so we do not generate conflicting coordinates again
@@ -102,15 +109,7 @@
       var line = new THREE.LineSegments(edges, lineMaterial);
       objects[i].add(line);
     }
-
-    raycaster = new THREE.Raycaster();
-    mouse = new THREE.Vector2();
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(darkModeMedia.matches ? "black" : "white");
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
+    
     document.addEventListener( 'keyup', onKeyUp, false );
     document.addEventListener('mousemove', onDocumentMouseMove, false);
     
@@ -240,15 +239,6 @@
       Math.sin( THREE.Math.degToRad( theta )),
       Math.sin( THREE.Math.degToRad( theta ))
     );
-
-    // rotate every other cube a little
-    for (var i=0; i<objects.length; i+=2) {
-      objects[i].rotation.set(
-        objects[i].rotation.x + rotationSpeed[0],
-        objects[i].rotation.y += rotationSpeed[1],
-        objects[i].rotation.z += rotationSpeed[2]
-      )
-    }
 
     raycaster.setFromCamera( mouse, camera );
     renderer.render( scene, camera );
@@ -566,7 +556,7 @@ TWEEN.nextId = function () {
 
 // Include a performance.now polyfill.
 // In node.js, use process.hrtime.
-if (typeof (window) === 'undefined' && typeof (process) !== 'undefined') {
+if (typeof (self) === 'undefined' && typeof (process) !== 'undefined' && process.hrtime) {
 	TWEEN.now = function () {
 		var time = process.hrtime();
 
@@ -574,13 +564,13 @@ if (typeof (window) === 'undefined' && typeof (process) !== 'undefined') {
 		return time[0] * 1000 + time[1] / 1000000;
 	};
 }
-// In a browser, use window.performance.now if it is available.
-else if (typeof (window) !== 'undefined' &&
-         window.performance !== undefined &&
-		 window.performance.now !== undefined) {
+// In a browser, use self.performance.now if it is available.
+else if (typeof (self) !== 'undefined' &&
+         self.performance !== undefined &&
+		 self.performance.now !== undefined) {
 	// This must be bound, because directly assigning this function
 	// leads to an invocation exception in Chrome.
-	TWEEN.now = window.performance.now.bind(window.performance);
+	TWEEN.now = self.performance.now.bind(self.performance);
 }
 // Use Date.now if it is available.
 else if (Date.now !== undefined) {
@@ -613,6 +603,7 @@ TWEEN.Tween = function (object, group) {
 	this._onStartCallback = null;
 	this._onStartCallbackFired = false;
 	this._onUpdateCallback = null;
+	this._onRepeatCallback = null;
 	this._onCompleteCallback = null;
 	this._onStopCallback = null;
 	this._group = group || TWEEN;
@@ -621,17 +612,17 @@ TWEEN.Tween = function (object, group) {
 };
 
 TWEEN.Tween.prototype = {
-	getId: function getId() {
+	getId: function () {
 		return this._id;
 	},
 
-	isPlaying: function isPlaying() {
+	isPlaying: function () {
 		return this._isPlaying;
 	},
 
-	to: function to(properties, duration) {
+	to: function (properties, duration) {
 
-		this._valuesEnd = properties;
+		this._valuesEnd = Object.create(properties);
 
 		if (duration !== undefined) {
 			this._duration = duration;
@@ -641,7 +632,12 @@ TWEEN.Tween.prototype = {
 
 	},
 
-	start: function start(time) {
+	duration: function duration(d) {
+		this._duration = d;
+		return this;
+	},
+
+	start: function (time) {
 
 		this._group.add(this);
 
@@ -687,7 +683,7 @@ TWEEN.Tween.prototype = {
 
 	},
 
-	stop: function stop() {
+	stop: function () {
 
 		if (!this._isPlaying) {
 			return this;
@@ -705,14 +701,14 @@ TWEEN.Tween.prototype = {
 
 	},
 
-	end: function end() {
+	end: function () {
 
-		this.update(this._startTime + this._duration);
+		this.update(Infinity);
 		return this;
 
 	},
 
-	stopChainedTweens: function stopChainedTweens() {
+	stopChainedTweens: function () {
 
 		for (var i = 0, numChainedTweens = this._chainedTweens.length; i < numChainedTweens; i++) {
 			this._chainedTweens[i].stop();
@@ -720,89 +716,96 @@ TWEEN.Tween.prototype = {
 
 	},
 
-	group: function group(group) {
+	group: function (group) {
 		this._group = group;
 		return this;
 	},
 
-	delay: function delay(amount) {
+	delay: function (amount) {
 
 		this._delayTime = amount;
 		return this;
 
 	},
 
-	repeat: function repeat(times) {
+	repeat: function (times) {
 
 		this._repeat = times;
 		return this;
 
 	},
 
-	repeatDelay: function repeatDelay(amount) {
+	repeatDelay: function (amount) {
 
 		this._repeatDelayTime = amount;
 		return this;
 
 	},
 
-	yoyo: function yoyo(yy) {
+	yoyo: function (yoyo) {
 
-		this._yoyo = yy;
+		this._yoyo = yoyo;
 		return this;
 
 	},
 
-	easing: function easing(eas) {
+	easing: function (easingFunction) {
 
-		this._easingFunction = eas;
+		this._easingFunction = easingFunction;
 		return this;
 
 	},
 
-	interpolation: function interpolation(inter) {
+	interpolation: function (interpolationFunction) {
 
-		this._interpolationFunction = inter;
+		this._interpolationFunction = interpolationFunction;
 		return this;
 
 	},
 
-	chain: function chain() {
+	chain: function () {
 
 		this._chainedTweens = arguments;
 		return this;
 
 	},
 
-	onStart: function onStart(callback) {
+	onStart: function (callback) {
 
 		this._onStartCallback = callback;
 		return this;
 
 	},
 
-	onUpdate: function onUpdate(callback) {
+	onUpdate: function (callback) {
 
 		this._onUpdateCallback = callback;
 		return this;
 
 	},
 
-	onComplete: function onComplete(callback) {
+	onRepeat: function onRepeat(callback) {
+
+		this._onRepeatCallback = callback;
+		return this;
+
+	},
+
+	onComplete: function (callback) {
 
 		this._onCompleteCallback = callback;
 		return this;
 
 	},
 
-	onStop: function onStop(callback) {
+	onStop: function (callback) {
 
 		this._onStopCallback = callback;
 		return this;
 
 	},
 
-	update: function update(time) {
+	update: function (time) {
 
 		var property;
 		var elapsed;
@@ -862,7 +865,7 @@ TWEEN.Tween.prototype = {
 		}
 
 		if (this._onUpdateCallback !== null) {
-			this._onUpdateCallback(this._object);
+			this._onUpdateCallback(this._object, elapsed);
 		}
 
 		if (elapsed === 1) {
@@ -899,6 +902,10 @@ TWEEN.Tween.prototype = {
 					this._startTime = time + this._repeatDelayTime;
 				} else {
 					this._startTime = time + this._delayTime;
+				}
+
+				if (this._onRepeatCallback !== null) {
+					this._onRepeatCallback(this._object);
 				}
 
 				return true;

@@ -17,7 +17,7 @@
   var mouse = new THREE.Vector2(), INTERSECTED = {};
   var multiplier = 1;
   var objects = [];
-  var rotationSpeed = [(Math.random() * 0.4) / 100, (Math.random() * 0.4) / 100, (Math.random() * 0.4) / 100];
+  var rotationSpeed = [(Math.random() * 0.4) / 20, (Math.random() * 0.4) / 20, (Math.random() * 0.4) / 20];
   var PIVOT_SPEED = 0.02;
   var RADIUS = 300;
   var theta = 0;
@@ -40,6 +40,7 @@
   
   var socialThemes = {
     "twitter": ["#1DA1F2", "#14171A", "#657786", "#AAB8C2"],
+    "twitch": ["#6441A4"],
     "github": ["#333", "#6e5494", "#c6e48b", "#7bc96f", "#239a3b", "#196127"],
     "evernote": ['#00A82D'],
     "stackoverflow": ["#f48024", "#222426", "#bcbbbb"],
@@ -77,16 +78,22 @@
     scene = new THREE.Scene();
     scene.add(pivot);
 
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(darkModeMedia.matches ? "black" : "white");
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
     var geometry = new THREE.BoxGeometry( CUBE_SIZE, CUBE_SIZE, CUBE_SIZE );
     geometry.colorsNeedUpdate = true;
-
-    var randomTheme = Math.floor(Math.random() * themes.length);
 
     for (var i = 0; i < NUM_OF_CUBES; i++) {
       var randomColor = Math.random() * 0xffffff;
       // generate random coordinates that are not already occupied yet
       var coordinates = generateRandomCoords(filterCoordinates);
-      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: new THREE.Color(randomColor), opacity: 0.4, transparent: true, depthWrite: false } ) );
+      objects[i] = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: new THREE.Color(randomColor), opacity: 0.6, transparent: true, depthWrite: false } ) );
       objects[i].position.set(coordinates.x, coordinates.y, coordinates.z);
 
       // add to filter so we do not generate conflicting coordinates again
@@ -101,15 +108,7 @@
       var line = new THREE.LineSegments(edges, lineMaterial);
       objects[i].add(line);
     }
-
-    raycaster = new THREE.Raycaster();
-    mouse = new THREE.Vector2();
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(darkModeMedia.matches ? "black" : "white");
-    renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
+    
     document.addEventListener( 'keyup', onKeyUp, false );
     document.addEventListener('mousemove', onDocumentMouseMove, false);
     
@@ -239,15 +238,6 @@
       Math.sin( THREE.Math.degToRad( theta )),
       Math.sin( THREE.Math.degToRad( theta ))
     );
-
-    // rotate every other cube a little
-    for (var i=0; i<objects.length; i+=2) {
-      objects[i].rotation.set(
-        objects[i].rotation.x + rotationSpeed[0],
-        objects[i].rotation.y += rotationSpeed[1],
-        objects[i].rotation.z += rotationSpeed[2]
-      )
-    }
 
     raycaster.setFromCamera( mouse, camera );
     renderer.render( scene, camera );

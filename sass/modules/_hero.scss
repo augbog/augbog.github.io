@@ -88,6 +88,19 @@
     }
   }
 
+  .twitch {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    fill: #6441A4;
+    vertical-align: bottom;
+
+    &:hover, &:focus {
+      transition: transform 0.1s ease-out 0s;
+      transform: scale(1.2);
+    }
+  }
+
   .twitter {
     fill: #5EA9DD;
   }

@@ -5,7 +5,8 @@
   "repository": "augbog.github.io",
   "author": "Augustus Yuan",
   "scripts": {
-    "build": "gulp svgstore sass scripts"
+    "build": "gulp svgstore sass scripts",
+    "dev": "gulp"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
