@@ -40,7 +40,7 @@
   
   var socialThemes = {
     "twitter": ["#1DA1F2", "#14171A", "#657786", "#AAB8C2"],
-    "twitch": ["#6441A4"],
+    "twitch": ["#9146ff"],
     "github": ["#333", "#6e5494", "#c6e48b", "#7bc96f", "#239a3b", "#196127"],
     "evernote": ['#00A82D'],
     "stackoverflow": ["#f48024", "#222426", "#bcbbbb"],
