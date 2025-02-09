@@ -1,42 +1,17 @@
 {
   "name": "augbog.github.io",
   "version": "1.0.0",
-  "description": "Augustus Yuan's personal website",
-  "repository": "augbog.github.io",
-  "author": "Augustus Yuan",
+  "description": "Augustus's Personal Website built with Vite + Three.js",
   "scripts": {
-    "build": "gulp svgstore sass scripts",
-    "dev": "gulp"
+    "dev": "vite",
+    "build": "vite build"
   },
+  "author": "Augustus Yuan",
+  "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^6.4.0",
-    "babel-eslint": "^4.1.6",
-    "beepbeep": "~1.2.0",
-    "browser-sync": "^2.7.1",
-    "colors": "~1.1.2",
-    "eslint": "^6.7.2",
-    "eslint-plugin-react": "^3.11.3",
-    "gulp": "^3.8.11",
-    "gulp-browserify": "^0.5.1",
-    "gulp-eslint": "^1.1.1",
-    "gulp-inject": "^4.0.0",
-    "gulp-jsonlint": "^1.1.2",
-    "gulp-minify-css": "^1.1.1",
-    "gulp-notify": "^2.2.0",
-    "gulp-plumber": "~1.0.1",
-    "gulp-postcss": "^6.1.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-replace": "^0.5.4",
-    "gulp-sass": "^2.1.1",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-svgmin": "^1.2.2",
-    "gulp-svgstore": "^6.0.0",
-    "gulp-uglify": "^1.2.0",
-    "merge-stream": "^1.0.1",
-    "path": "^0.11.14"
-  },
-  "dependencies": {
-    "@tweenjs/tween.js": "^17.2.0",
-    "konami-komando": "^1.0.1"
+    "@tweenjs/tween.js": "^25.0.0",
+    "three": "^0.169.0",
+    "vite": "^5.4.9",
+    "vite-plugin-restart": "^0.4.1"
   }
 }
