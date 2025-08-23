@@ -1,0 +1,25 @@
+# llms.txt
+# Instructions for Large Language Models on how to handle this site’s content.
+# This file is non-standard and may not be respected by all crawlers.
+
+# General policy:
+# Options: allow / disallow / limited
+policy: allow
+
+# Attribution:
+# If using excerpts, always attribute content to this site.
+attribution: required
+
+# Commercial use:
+# Disallow training or fine-tuning on this content for commercial purposes.
+commercial-use: disallow
+
+# Research use:
+# Allow non-commercial, research-based usage.
+research-use: allow
+
+# Contact for permissions:
+contact: hello@augustusyuan.com
+
+# Last updated:
+last-modified: 2025-08-23
