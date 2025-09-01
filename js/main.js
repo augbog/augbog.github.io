@@ -1,14 +1,17 @@
+import './quote.js';
+import konami from 'konami-komando';
+import * as TWEEN from '@tweenjs/tween.js';
+import '../styles/tailwind.css';
+
 (function() {
   'use strict';
-  require('./quote.js');
-  require("konami-komando")({
+  konami({
     once: true,
     useCapture: true,
     callback: function() {
       blowUpCubes();
     }
   });
-  var TWEEN = require("@tweenjs/tween.js");
   window.TWEEN = TWEEN;
 
   var camera, scene, renderer;

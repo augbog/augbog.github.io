@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base resets and small tweaks */
+@layer base {
+  /* Use Tailwind Preflight for resets; augment as needed */
+  a, a:link, a:visited { @apply text-inherit no-underline border-b border-transparent; }
+  ul { @apply p-0; }
+  li { list-style-type: none; }
+  body { @apply transition-all ease-in duration-500 antialiased font-sans; }
+}
+
+/* Components ported from SCSS using @apply */
+@layer components {
+  .animate-link { @apply border-b border-transparent; }
+  .animate-link:hover { @apply cursor-pointer transition-colors ease-in duration-500; border-color: rgba(0,0,0,0.2); }
+
+  .hero { @apply antialiased font-sans relative overflow-hidden; }
+
+  .hero .content {
+    @apply fixed text-center w-full top-1/2 left-1/2 bg-white/70 py-5;
+    transform: translate(-50%, -50%);
+  }
+
+  .hero .heading { @apply max-w-[80%] mx-auto text-[36px] font-normal tracking-[-0.5px] mb-1; }
+
+  .hero .heading.quote { @apply text-[26px] max-w-[60%]; }
+  @media (max-width: 600px) {
+    .hero .heading.quote { @apply text-[24px] max-w-[80%]; }
+  }
+
+  .hero .job-title { @apply text-[20px] font-extralight mb-2 align-middle; }
+  .hero .description { @apply text-[20px] font-extralight m-0 mb-5; }
+
+  .hero svg { width: inherit; height: inherit; }
+
+  .hero .icon { @apply inline-block w-5 h-5 mx-[10px]; }
+  .hero .icon:hover, .hero .icon:focus { @apply transition-transform ease-out duration-100; transform: scale(1.2); }
+  @media (max-width: 600px) {
+    .hero .icon { @apply w-[30px] h-[30px]; }
+  }
+
+  .hero .evernote { @apply inline-block w-[25px] h-[25px] align-bottom; fill: #666; }
+  .hero .evernote:hover, .hero .evernote:focus { @apply transition-transform ease-out duration-100; transform: scale(1.2); }
+
+  .hero .twitch { @apply inline-block w-[25px] h-[25px] align-bottom; fill: #9146ff; }
+  .hero .twitch:hover, .hero .twitch:focus { @apply transition-transform ease-out duration-100; transform: scale(1.2); }
+
+  .hero .twitter { fill: #5EA9DD; }
+  .hero .linkedin { fill: #0077B5; }
+
+  .profile { @apply w-[100px] rounded-full; }
+  .score { @apply font-mono text-[30px] font-extrabold; }
+  .js-score-hidden { @apply hidden; }
+
+  header { @apply font-sans antialiased font-extralight absolute top-0 w-full z-[3]; }
+  @media (max-width: 600px) { header { @apply text-center; } }
+
+  header .header-container { @apply flex mx-5; }
+  header .left-align { align-self: flex-start; }
+  header .right-align { margin-left: auto; }
+  header .secondary-nav { line-height: 22px; }
+  header .mail-icon { width: 15px; height: 22px; vertical-align: bottom; }
+  header li { @apply inline-block mx-5; height: auto; }
+  header li:first-child { margin-left: 0; }
+  header li:last-child { margin-right: 0; }
+  header .profile { @apply rounded-full; }
+}
+
+/* Dark mode adjustments (prefers-color-scheme: dark) */
+@media (prefers-color-scheme: dark) {
+  body { color: white !important; font-weight: 800 !important; }
+  .github use, .mail-icon use { fill: white !important; }
+  .content { background: transparent !important; }
+  .job-title, .description, .email { font-weight: 400 !important; }
+}

@@ -1,5 +1,7 @@
+import quotes from '../json/quotes.json';
+import '../styles/tailwind.css';
+
 (function() {
-  var quotes = require('../json/quotes.json');
   var quoteTrigger = document.getElementById('quotes');
 
   String.prototype.typeout = function(targetElem) {
