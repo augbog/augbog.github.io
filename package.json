@@ -1,42 +1,21 @@
 {
   "name": "augbog.github.io",
+  "private": true,
   "version": "1.0.0",
-  "description": "Augustus Yuan's personal website",
-  "repository": "augbog.github.io",
-  "author": "Augustus Yuan",
+  "type": "module",
   "scripts": {
-    "build": "gulp svgstore sass scripts",
-    "dev": "gulp"
-  },
-  "devDependencies": {
-    "autoprefixer": "^6.4.0",
-    "babel-eslint": "^4.1.6",
-    "beepbeep": "~1.2.0",
-    "browser-sync": "^2.7.1",
-    "colors": "~1.1.2",
-    "eslint": "^6.7.2",
-    "eslint-plugin-react": "^3.11.3",
-    "gulp": "^3.8.11",
-    "gulp-browserify": "^0.5.1",
-    "gulp-eslint": "^1.1.1",
-    "gulp-inject": "^4.0.0",
-    "gulp-jsonlint": "^1.1.2",
-    "gulp-minify-css": "^1.1.1",
-    "gulp-notify": "^2.2.0",
-    "gulp-plumber": "~1.0.1",
-    "gulp-postcss": "^6.1.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-replace": "^0.5.4",
-    "gulp-sass": "^2.1.1",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-svgmin": "^1.2.2",
-    "gulp-svgstore": "^6.0.0",
-    "gulp-uglify": "^1.2.0",
-    "merge-stream": "^1.0.1",
-    "path": "^0.11.14"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@tweenjs/tween.js": "^17.2.0",
-    "konami-komando": "^1.0.1"
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "vite": "^7.1.3"
   }
 }
