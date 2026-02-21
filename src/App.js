@@ -1,4 +1,7 @@
-import { useEffect, useRef } from 'react';
+import React from 'https://esm.sh/react@19.1.1';
+
+const { useEffect, useRef } = React;
+const h = React.createElement;
 
 const socialLinks = [
   { label: 'Twitter', href: 'https://mobile.twitter.com/augburto' },
@@ -45,8 +48,8 @@ function AnimatedPatternCanvas() {
           const waveY = Math.cos((y * 0.012) - t * 0.9);
           const offset = (waveX + waveY) * 8;
           const radius = 1.5 + ((waveX + 1) * 2.2);
-
           const alpha = 0.14 + ((waveY + 1) / 2) * 0.18;
+
           context.beginPath();
           context.fillStyle = `rgba(34, 211, 238, ${alpha.toFixed(3)})`;
           context.arc(x + offset, y - offset, radius, 0, Math.PI * 2);
@@ -67,35 +70,48 @@ function AnimatedPatternCanvas() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="animated-pattern" aria-hidden="true" />;
+  return h('canvas', { ref: canvasRef, className: 'animated-pattern', 'aria-hidden': 'true' });
 }
 
 export default function App() {
-  return (
-    <main className="site-shell">
-      <AnimatedPatternCanvas />
-      <section className="hero-card">
-        <p className="kicker">Augustus Yuan</p>
-        <h1>Augustus Yuan</h1>
-        <p className="role">
-          Software Engineer at{' '}
-          <a href="https://heygen.com" target="_blank" rel="noreferrer">
-            HeyGen
-          </a>
-        </p>
-
-        <nav aria-label="Social links">
-          <ul className="social-list">
-            {socialLinks.map((link) => (
-              <li key={link.label}>
-                <a href={link.href} target="_blank" rel="noreferrer">
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </section>
-    </main>
+  return h(
+    'main',
+    { className: 'site-shell' },
+    h(AnimatedPatternCanvas),
+    h(
+      'section',
+      { className: 'hero-card' },
+      h('p', { className: 'kicker' }, 'Augustus Yuan'),
+      h('h1', null, 'Augustus Yuan'),
+      h(
+        'p',
+        { className: 'role' },
+        'Software Engineer at ',
+        h(
+          'a',
+          { href: 'https://heygen.com', target: '_blank', rel: 'noreferrer' },
+          'HeyGen',
+        ),
+      ),
+      h(
+        'nav',
+        { 'aria-label': 'Social links' },
+        h(
+          'ul',
+          { className: 'social-list' },
+          ...socialLinks.map((link) =>
+            h(
+              'li',
+              { key: link.label },
+              h(
+                'a',
+                { href: link.href, target: '_blank', rel: 'noreferrer' },
+                link.label,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
   );
 }
