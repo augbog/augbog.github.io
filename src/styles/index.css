@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Reset ── */
+@layer base {
+  body, h1, h2, h3 {
+    margin: 0;
+  }
+
+  ul {
+    padding: 0;
+  }
+
+  li {
+    list-style-type: none;
+  }
+
+  a, a:link, a:visited {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  body {
+    transition: all 0.5s ease-in 0s;
+    font-family: "Helvetica Neue", helvetica, arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+/* ── Animate link ── */
+@layer components {
+  .animate-link {
+    border-bottom: 0.5px solid transparent;
+  }
+
+  .animate-link:hover {
+    cursor: pointer;
+    transition: border-color 0.5s ease-in 0s;
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+
+  /* ── Score ── */
+  .score {
+    font-family: monospace;
+    font-size: 30px;
+    font-weight: 800;
+  }
+}
+
+/* ── Dark mode overrides ── */
+@media (prefers-color-scheme: dark) {
+  body {
+    color: white !important;
+    font-weight: 800 !important;
+  }
+
+  .github svg use,
+  .mail-icon use {
+    fill: white !important;
+  }
+
+  .content-overlay {
+    background: transparent !important;
+  }
+
+  .job-title,
+  .description,
+  .email {
+    font-weight: 400 !important;
+  }
+
+  .animate-link:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+}
