@@ -38,8 +38,11 @@ export default function markdownBlog() {
 
     load(id) {
       if (id === RESOLVED_LIST) {
-        const posts = getAllPosts().map(({ content, ...meta }) => meta);
-        return `export default ${JSON.stringify(posts)};`;
+        const posts = getAllPosts();
+        // Export both metadata-only list and full posts map
+        const meta = posts.map(({ content, ...rest }) => rest);
+        const full = Object.fromEntries(posts.map((p) => [p.slug, p]));
+        return `export const postsMeta = ${JSON.stringify(meta)};\nexport const postsMap = ${JSON.stringify(full)};\nexport default ${JSON.stringify(meta)};`;
       }
       if (id.startsWith(RESOLVED_POST_PREFIX)) {
         const slug = id.slice(RESOLVED_POST_PREFIX.length);

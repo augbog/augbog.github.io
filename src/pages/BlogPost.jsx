@@ -1,30 +1,10 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import MarkdownRenderer from '../components/MarkdownRenderer';
-import posts from 'virtual:blog-posts';
+import posts, { postsMap } from 'virtual:blog-posts';
 
 export default function BlogPost() {
   const { slug } = useParams();
-  const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Dynamic import of the specific post
-    import(/* @vite-ignore */ `virtual:blog-post:${slug}`)
-      .then((mod) => {
-        setPost(mod.default);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div style={{ maxWidth: '700px', margin: '0 auto', padding: '3rem 2rem', textAlign: 'center' }}>
-        <p style={{ opacity: 0.5 }}>Loading...</p>
-      </div>
-    );
-  }
+  const post = postsMap[slug];
 
   if (!post) {
     return (
