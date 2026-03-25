@@ -74,7 +74,7 @@ export default function Quotes() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '100vh',
+        minHeight: 'calc(100vh - 10rem)',
         padding: '2rem',
         fontFamily: '"Helvetica Neue", helvetica, arial, sans-serif',
         textAlign: 'center',
